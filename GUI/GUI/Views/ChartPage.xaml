@@ -7,9 +7,69 @@
              x:Class="GUI.Views.ChartPage">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <StackLayout VerticalOptions="StartAndExpand">
+                <ScrollView>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <CollectionView x:Name="pizzasList" 
+                            Margin="10, 10, 10, 0" ItemsSource="" 
+                            VerticalScrollBarVisibility="Never">
+                            
+                            <CollectionView.ItemsLayout>
+                                <GridItemsLayout Orientation="Vertical" Span="1"/>
+                            </CollectionView.ItemsLayout>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Text="{Binding}" d:Text="1" TextColor="Black"
+                                               FontSize="12" FontAttributes="Bold"
+                                               />
+                                        <Label Text="{Binding}" d:Text="Pizza"
+                                               FontSize="12" FontAttributes="Bold"
+                                               TextColor="Black" Grid.Column="1"
+                                               Margin="10,0,0,0"/>
+                                        <Label Text="{Binding}" d:Text="26,00 zl"
+                                               FontSize="14" Grid.Column="2"
+                                               HorizontalOptions="End" Margin="0,0,10,0"/>
+                                        <Label Text="{Binding}" d:Text="Description"
+                                               FontSize="10" TextColor="Black" Grid.Column="1"
+                                               Grid.Row="1"/>
+                                        <Label Text="{Binding}" d:Text="Średnia 24cm"
+                                               FontSize="10" TextColor="Black"
+                                               Grid.Row="2" Grid.Column="1"/>
+                                        <ImageButton Source="minus.png" HorizontalOptions="End"
+                                                     Margin="0,0,40,0" WidthRequest="20"
+                                                     HeightRequest="20" CornerRadius="5"
+                                                     Grid.Column="2" Grid.Row="2"/>
+                                        <ImageButton Source="add.png" HorizontalOptions="End"
+                                                     Margin="0,0,10,0" WidthRequest="20"
+                                                     HeightRequest="20" CornerRadius="5"
+                                                     Grid.Column="2" Grid.Row="2"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </Grid>
+                </ScrollView>
+            </StackLayout>
+            <StackLayout VerticalOptions="End">
+                
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

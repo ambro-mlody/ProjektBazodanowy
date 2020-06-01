@@ -58,9 +58,9 @@ namespace GUI.ViewModels
             }
         }
 
-        private double amount;
+        private int amount;
 
-        public double Amount
+        public int Amount
         {
             get { return amount; }
             set 
@@ -171,10 +171,13 @@ namespace GUI.ViewModels
         public ICommand AddToChartCommand => new Command(
             async () =>
             {
-                for (int i = 0; i < Amount; i++)
+                ((App)Application.Current).MainUser.UserChart.Pizzas.Add(new PizzaInChart
                 {
-                    ((App)Application.Current).MainUser.UserChart.Pizzas.Add(SelectedPizzaItem);
-                }
+                    Amount = Amount,
+                    Pizza = SelectedPizzaItem,
+                    Size = CurrentSize,
+                    TotalCost = TotalAmount
+                });
                 
                 ((App)Application.Current).MainUser.UserChart.Price += TotalAmount;
                 var res = await Application.Current.MainPage.DisplayAlert("", "Dodaliśmy produkt do koszyka", "Kontynuuj",
