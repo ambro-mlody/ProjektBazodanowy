@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="GUI.Views.AppMasterDetailPageMaster"
+             Title="Master">
+    
+    <StackLayout BackgroundColor="LightGray">
+    <ListView x:Name="MenuItemsListView"
+              SeparatorVisibility="Default"
+              HasUnevenRows="true"
+              ItemsSource="{Binding MenuItems}">
+      <d:ListView.ItemsSource>
+        <x:Array Type="{x:Type x:String}">
+            <x:String>Page 1</x:String>
+            <x:String>Page 2</x:String>
+            <x:String>Page 3</x:String>
+            <x:String>Page 4</x:String>
+        </x:Array>
+      </d:ListView.ItemsSource>
+      <ListView.Header>
+         <Grid BackgroundColor="Black">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="10"/>
+          </Grid.RowDefinitions>
+             <Image Source="pizza.png" Aspect="AspectFit" 
+                    HeightRequest="32" 
+                    WidthRequest="32" HorizontalOptions="Start" 
+                    Grid.Row="1" VerticalOptions="Center" Margin="10,0,0,0"/>
+             <Label Text="d'Italia" TextColor="Gold" FontSize="32" 
+                    Grid.Row="1" HorizontalOptions="Center" FontFamily="Lobster"/>
+          </Grid>
+      </ListView.Header>
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <StackLayout Padding="15,10" 
+                         HorizontalOptions="FillAndExpand" 
+                         Orientation="Horizontal"
+                         x:Name="menuItemStackLayout">
+                
+             <Image Source="{Binding Image}" Aspect="AspectFit" HorizontalOptions="Start" 
+                    HeightRequest="25" WidthRequest="25" Margin="0,0,5,0"
+                    d:Source="home.png"/>
+             <Label VerticalOptions="FillAndExpand" 
+                    VerticalTextAlignment="Center" 
+                    Text="{Binding Title}" 
+                    d:Text="{Binding .}"
+                     FontSize="Large" 
+                     TextColor="Black" 
+                     HorizontalOptions="StartAndExpand"/>
+            </StackLayout>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+  </StackLayout>
+</ContentPage>

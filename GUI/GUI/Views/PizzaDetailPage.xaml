@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="GUI.Views.PizzaDetailPage">
+
+    <StackLayout>
+        <StackLayout Padding="10" VerticalOptions="StartAndExpand">
+            <ScrollView>
+                <Grid RowSpacing="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Image Source="{Binding SelectedPizzaItem.Image}" Aspect="AspectFit" HeightRequest="200"
+                           WidthRequest="200" HorizontalOptions="Center" VerticalOptions="Center"
+                           Grid.Row="0" d:Source="search.png"/>
+                    <Label Text="{Binding CurrentPrice, StringFormat='{0} PLN'}" 
+                           VerticalOptions="Center" HorizontalOptions="End" 
+                           Grid.Row="1" d:Text="9.99 PLN" FontSize="20"
+                           TextColor="Black" FontAttributes="Bold" Margin="0,0,20,0"/>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Text="{Binding SelectedPizzaItem.Name}" TextColor="Black"
+                               HorizontalOptions="Start" FontAttributes="Bold" Grid.Column="0"
+                               d:Text="Pizza1" FontSize="26"/>
+                        <StackLayout Grid.Column="1" Orientation="Horizontal" 
+                                     VerticalOptions="Center" HorizontalOptions="End" 
+                                     >
+                            <ImageButton x:Name="minusImageButton" Source="minus.png" WidthRequest="34" Aspect="AspectFit" 
+                                         HeightRequest="34" Command="{Binding MinusPizzaCommand}" />
+                            <Label Text="{Binding Amount, StringFormat='{0}x' }" 
+                                   TextColor="Black" FontSize="26" 
+                                   FontAttributes="Bold" HorizontalOptions="End"
+                                   d:Text="1x"/>
+                            <ImageButton Source="add.png" WidthRequest="34" Aspect="AspectFit"
+                                         HeightRequest="34" Command="{Binding PlusPizzaCommand}"/>
+                        </StackLayout>
+                    </Grid>
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackLayout Orientation="Vertical">
+                            <Label Text="Rozmiar" TextColor="Gray" FontSize="18" 
+                                   VerticalOptions="Center"/>
+                            <Label Text="{Binding CurrentSize}" FontSize="22" FontAttributes="Bold"
+                                   VerticalOptions="Start" TextColor="Black" d:Text="Średnia 32 cm" 
+                                   Margin="0,-10,0,0"/>
+                        </StackLayout>
+                        <Label Text="Wybierz" TextColor="Red" FontSize="20" 
+                                VerticalOptions="Center" HorizontalOptions="End" 
+                                Grid.Column="1" Margin="0,0,10,0">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ChoseSizeCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+                    <StackLayout Grid.Row="4" Orientation="Vertical" >
+                        <Label Text="Składniki" TextColor="Gray" FontSize="18" 
+                                   VerticalOptions="Center" />
+                        <ListView ItemsSource="{Binding SelectedPizzaItem.Ingredients}" Margin="10,0,0,0"
+                                   VerticalScrollBarVisibility="Never" HasUnevenRows="False"
+                                   SeparatorColor="Black" HorizontalScrollBarVisibility="Never"
+                                  HeightRequest="160">
+
+                            <d:ListView.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>ingredient1</x:String>
+                                    <x:String>ingredient2</x:String>
+                                    <x:String>ingredient3</x:String>
+                                    <x:String>ingredient4</x:String>
+                                    <x:String>ingredient5</x:String>
+                                    <x:String>ingredient6</x:String>
+                                </x:Array>
+                            </d:ListView.ItemsSource>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Label Text="{Binding .}" d:Text="{Binding .}" 
+                                              TextColor="Black" FontSize="20" />
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackLayout>
+                </Grid>
+            </ScrollView>
+        </StackLayout>
+        <StackLayout Padding="10,10,10,10"
+                     VerticalOptions="End">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="cart.png" Aspect="AspectFit" HeightRequest="20" 
+                   WidthRequest="20" HorizontalOptions="Start" 
+                   VerticalOptions="Center" Grid.Column="0"/>
+                <Label Text="{Binding TotalAmount, StringFormat='{0} PLN'}" TextColor="Black" 
+                   FontSize="18" HorizontalOptions="Start" VerticalOptions="Center" 
+                   d:Text="29,99 PLN" Grid.Column="1" Margin="5,0,0,0"/>
+                <Button Text="Dodaj do koszyka" BackgroundColor="Blue" Grid.Column="2"
+                        TextColor="White" FontSize="16" WidthRequest="180" 
+                        HeightRequest="48"
+                        VerticalOptions="Center" HorizontalOptions="End"
+                        Command="{Binding AddToChartCommand}"
+                        CornerRadius="10"/>
+            </Grid>
+        </StackLayout>
+
+    </StackLayout>
+
+
+</ContentPage>
