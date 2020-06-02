@@ -48,7 +48,7 @@ namespace GUI.ViewModels
             return new ObservableCollection<PizzaItem>
             {
                 new PizzaItem {Id = 0, Name = "Pizza1", Description = "Description1", Price = 11.99,
-                    PreperationTime = 40, Image = "search.png", Ingredients = new List<string>{ "cos1", "cos2", "cos3" } },
+                    PreperationTime = 40, Image = "search.png", Ingredients = new List<string>{ "cos1", "cos2", "cos3", "tes1", "test2", "test3" } },
                 new PizzaItem {Id = 1, Name = "Pizza2", Description = "Description2", Price = 12.99,
                     PreperationTime = 45, Image = "search.png", Ingredients = new List<string>{ "cos4", "cos5", "cos6" } },
                 new PizzaItem {Id = 2, Name = "Pizza3", Description = "Description3", Price = 13.99,
@@ -79,7 +79,7 @@ namespace GUI.ViewModels
         public ICommand ShowChartCommand => new Command(
             async () =>
             {
-                var viewModel = new ChartViewModel { };
+                var viewModel = new ChartViewModel(ref ((App)Application.Current).MainUser);
                 var chartPage = new ChartPage { BindingContext = viewModel };
                 chartPage.Title = "Koszyk";
                 var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;

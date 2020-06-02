@@ -4,18 +4,19 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
+             x:Name="chartPage"
              x:Class="GUI.Views.ChartPage">
     <ContentPage.Content>
         <StackLayout>
             <StackLayout VerticalOptions="StartAndExpand">
                 <ScrollView>
-                    <Grid>
+                    <Grid Margin="10, 10, 10, 0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <CollectionView x:Name="pizzasList" 
-                            Margin="10, 10, 10, 0" ItemsSource="" 
+                            ItemsSource="{Binding Pizzas}" 
                             VerticalScrollBarVisibility="Never">
                             
                             <CollectionView.ItemsLayout>
@@ -28,42 +29,50 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <Label Text="{Binding}" d:Text="1" TextColor="Black"
-                                               FontSize="12" FontAttributes="Bold"
+                                        <Label Text="{Binding Amount}" d:Text="1" TextColor="Black"
+                                               FontSize="14" FontAttributes="Bold"
                                                />
-                                        <Label Text="{Binding}" d:Text="Pizza"
-                                               FontSize="12" FontAttributes="Bold"
+                                        <Label Text="{Binding Pizza.Name}" d:Text="Pizza"
+                                               FontSize="16" FontAttributes="Bold"
                                                TextColor="Black" Grid.Column="1"
                                                Margin="10,0,0,0"/>
-                                        <Label Text="{Binding}" d:Text="26,00 zl"
-                                               FontSize="14" Grid.Column="2"
+                                        <Label Text="{Binding TotalCost, StringFormat='{0} PLN'}" d:Text="26,00 zl"
+                                               FontSize="16" Grid.Column="2"
                                                HorizontalOptions="End" Margin="0,0,10,0"/>
-                                        <Label Text="{Binding}" d:Text="Description"
-                                               FontSize="10" TextColor="Black" Grid.Column="1"
+                                        <Label Text="{Binding Pizza.Description}" d:Text="Description"
+                                               FontSize="12" TextColor="Black" Grid.Column="1"
                                                Grid.Row="1"/>
-                                        <Label Text="{Binding}" d:Text="Średnia 24cm"
-                                               FontSize="10" TextColor="Black"
-                                               Grid.Row="2" Grid.Column="1"/>
+                                        <Label Text="{Binding Size}" d:Text="Średnia 32cm"
+                                               FontSize="12" TextColor="Black"
+                                               Grid.Row="2" Grid.Column="1"
+                                               Margin="0,-15,0,5"/>
                                         <ImageButton Source="minus.png" HorizontalOptions="End"
-                                                     Margin="0,0,40,0" WidthRequest="20"
-                                                     HeightRequest="20" CornerRadius="5"
-                                                     Grid.Column="2" Grid.Row="2"/>
+                                                     Margin="0,0,50,0" WidthRequest="25"
+                                                     HeightRequest="25" CornerRadius="5"
+                                                     Grid.Column="2" Grid.Row="1"
+                                                     Command="{Binding BindingContext.MinusAmmountCommand, Source={x:Reference Name=chartPage}, Mode=TwoWay}"
+                                                     CommandParameter="{Binding .}"/>
                                         <ImageButton Source="add.png" HorizontalOptions="End"
-                                                     Margin="0,0,10,0" WidthRequest="20"
-                                                     HeightRequest="20" CornerRadius="5"
-                                                     Grid.Column="2" Grid.Row="2"/>
+                                                     Margin="10,0,10,0" WidthRequest="25"
+                                                     HeightRequest="25" CornerRadius="5"
+                                                     Grid.Column="2" Grid.Row="1"
+                                                     Command="{Binding BindingContext.PlusAmmountCommand, Source={x:Reference Name=chartPage}, Mode=TwoWay}"
+                                                     CommandParameter="{Binding .}"/>
                                     </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
+                        <StackLayout>
+                            
+                        </StackLayout>
                     </Grid>
                 </ScrollView>
             </StackLayout>

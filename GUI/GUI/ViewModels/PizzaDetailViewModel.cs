@@ -168,6 +168,8 @@ namespace GUI.ViewModels
 
             });
 
+        private int id = 0;
+
         public ICommand AddToChartCommand => new Command(
             async () =>
             {
@@ -176,9 +178,13 @@ namespace GUI.ViewModels
                     Amount = Amount,
                     Pizza = SelectedPizzaItem,
                     Size = CurrentSize,
-                    TotalCost = TotalAmount
+                    TotalCost = TotalAmount,
+                    CostOfOne = CurrentPrice,
+                    Id = id
                 });
-                
+
+                id++;
+
                 ((App)Application.Current).MainUser.UserChart.Price += TotalAmount;
                 var res = await Application.Current.MainPage.DisplayAlert("", "Dodaliśmy produkt do koszyka", "Kontynuuj",
                     "Koszyk");
@@ -191,7 +197,7 @@ namespace GUI.ViewModels
                 {
                     var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
                     await navigation.PopAsync();
-                    var viewModel = new ChartViewModel { };
+                    var viewModel = new ChartViewModel(ref ((App)Application.Current).MainUser);
                     var chartPage = new ChartPage { BindingContext = viewModel };
                     chartPage.Title = "Koszyk";
 
