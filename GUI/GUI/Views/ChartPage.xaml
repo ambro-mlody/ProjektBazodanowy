@@ -3,21 +3,56 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:behaviors="clr-namespace:GUI.Behaviors"
              mc:Ignorable="d"
              x:Name="chartPage"
              x:Class="GUI.Views.ChartPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <behaviors:BoolToLabelConverter x:Key="boolToNotEmptyStyle" 
+                                            x:TypeArguments="Style">
+                <behaviors:BoolToLabelConverter.FalseLabel>
+                    <Style TargetType="Label">
+                        <Setter Property="Text" Value="Pole nie może być puste!" />
+                        <Setter Property="IsVisible" Value="True"/>
+                    </Style>
+                </behaviors:BoolToLabelConverter.FalseLabel>
+                <behaviors:BoolToLabelConverter.TrueLabel>
+                    <Style TargetType="Label">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </Style>
+                </behaviors:BoolToLabelConverter.TrueLabel>
+            </behaviors:BoolToLabelConverter>
+            
+            <behaviors:BoolToLabelConverter x:Key="boolToInvalidInputStyle" 
+                                            x:TypeArguments="Style">
+                <behaviors:BoolToLabelConverter.FalseLabel>
+                    <Style TargetType="Label">
+                        <Setter Property="Text" Value="Pole nie jest poprawne!" />
+                        <Setter Property="IsVisible" Value="True"/>
+                    </Style>
+                </behaviors:BoolToLabelConverter.FalseLabel>
+                <behaviors:BoolToLabelConverter.TrueLabel>
+                    <Style TargetType="Label">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </Style>
+                </behaviors:BoolToLabelConverter.TrueLabel>
+            </behaviors:BoolToLabelConverter>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <ContentPage.Content>
         <StackLayout>
             <StackLayout VerticalOptions="StartAndExpand">
                 <ScrollView>
                     <Grid Margin="10, 10, 10, 0">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <CollectionView x:Name="pizzasList" 
                             ItemsSource="{Binding Pizzas}" 
-                            VerticalScrollBarVisibility="Never">
+                            VerticalScrollBarVisibility="Never" HeightRequest="160">
                             
                             <CollectionView.ItemsLayout>
                                 <GridItemsLayout Orientation="Vertical" Span="1"/>
@@ -29,7 +64,7 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -70,14 +105,132 @@
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
-                        <StackLayout>
-                            
-                        </StackLayout>
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackLayout>
+                                <Label Text="Podaj adres zamówienia: " FontSize="14" 
+                                   TextColor="Black" FontAttributes="Bold" />
+                                <StackLayout>
+                                    <Entry Text="{Binding user.Address.Street}" Placeholder="Ulica" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing">
+                                        <Entry.Behaviors>
+                                            <behaviors:NotEmptyBehavior x:Name="streetValidator"/>
+                                        </Entry.Behaviors>
+                                    </Entry>
+                                    <Label x:Name="streetErrorLabel" FontSize="9" Margin="10,-5,0,0"
+                                           TextColor="Red" Style="{Binding Source={x:Reference streetValidator}, 
+                                           Path=IsValid, Converter={StaticResource boolToNotEmptyStyle}}"
+                                           />
+                                </StackLayout>
+                                <StackLayout>
+                                    <Entry Text="{Binding user.Address.HouseNumber}" Placeholder="Numer Domu" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing">
+                                        <Entry.Behaviors>
+                                            <behaviors:NotEmptyBehavior x:Name="houseNumberValidator"/>
+                                        </Entry.Behaviors>
+                                    </Entry>
+                                    <Label x:Name="houseNumberErrorLabel" FontSize="9" Margin="10,-5,0,0"
+                                           TextColor="Red" Style="{Binding Source={x:Reference houseNumberValidator}, 
+                                           Path=IsValid, Converter={StaticResource boolToNotEmptyStyle}}"
+                                           />
+                                </StackLayout>
+
+                                <Entry Text="{Binding user.Address.LocalNumber}" Placeholder="Numer mieszkania (opcjonalne)" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing"/>
+                                <StackLayout>
+                                    <Entry Text="{Binding user.Address.City}" Placeholder="Miasto" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing">
+                                        <Entry.Behaviors>
+                                            <behaviors:NotEmptyBehavior x:Name="cityValidator"/>
+                                        </Entry.Behaviors>
+                                    </Entry>
+                                    <Label x:Name="cityErrorLabel" FontSize="9" Margin="10,-5,0,0"
+                                           TextColor="Red" Style="{Binding Source={x:Reference cityValidator}, 
+                                           Path=IsValid, Converter={StaticResource boolToNotEmptyStyle}}"
+                                           />
+                                </StackLayout>
+                                <StackLayout>
+                                    <Entry Text="{Binding user.Address.PostCode}" Placeholder="Kod Pocztowy" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing" MaxLength="6">
+                                        <Entry.Behaviors>
+                                            <behaviors:PostCodeBehavior x:Name="postCodeValidator"/>
+                                        </Entry.Behaviors>
+                                    </Entry>
+                                    <Label x:Name="postCodeErrorLabel" FontSize="9" Margin="10,-5,0,0"
+                                           TextColor="Red" Style="{Binding Source={x:Reference postCodeValidator}, 
+                                           Path=IsValid, Converter={StaticResource boolToInvalidInputStyle}}"
+                                           />
+                                </StackLayout>
+
+                            </StackLayout>
+                            <StackLayout Grid.Row="1">
+                                <Label Text="Podaj kto odbierze zamówienie: " FontSize="14"
+                                   TextColor="Black" FontAttributes="Bold"/>
+                                <StackLayout>
+                                    <Entry Text="{Binding user.FirstName}" Placeholder="Imię" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing">
+                                        <Entry.Behaviors>
+                                            <behaviors:NotEmptyBehavior x:Name="firstNameValidator"/>
+                                        </Entry.Behaviors>
+                                    </Entry>
+                                    <Label x:Name="firstNameErrorLabel" FontSize="9" Margin="10,-5,0,0"
+                                           TextColor="Red" Style="{Binding Source={x:Reference firstNameValidator}, 
+                                           Path=IsValid, Converter={StaticResource boolToNotEmptyStyle}}"
+                                           />
+                                </StackLayout>
+                                <StackLayout>
+                                    <Entry Text="{Binding user.LastName, Mode=TwoWay}" Placeholder="Nazwisko" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing">
+                                        <Entry.Behaviors>
+                                            <behaviors:NotEmptyBehavior x:Name="lastNameValidator"/>
+                                        </Entry.Behaviors>
+                                    </Entry>
+                                    <Label x:Name="lastNameErrorLabel" FontSize="9" Margin="10,-5,0,0"
+                                           TextColor="Red" Style="{Binding Source={x:Reference lastNameValidator}, 
+                                           Path=IsValid, Converter={StaticResource boolToNotEmptyStyle}}"
+                                           />
+                                </StackLayout>
+                                <StackLayout>
+                                    <Entry Text="{Binding user.PhoneNumber}" Placeholder="Numer telefonu" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing" MaxLength="9">
+                                        <Entry.Behaviors>
+                                            <behaviors:PhoneNumberBehavior x:Name="phoneNumberValidator"/>
+                                        </Entry.Behaviors>
+                                    </Entry>
+                                    <Label x:Name="phoneNumberErrorLabel" FontSize="9" Margin="10,-5,0,0"
+                                           TextColor="Red" Style="{Binding Source={x:Reference phoneNumberValidator}, 
+                                           Path=IsValid, Converter={StaticResource boolToInvalidInputStyle}}"
+                                           />
+                                </StackLayout>
+                                <StackLayout>
+                                    <Entry Text="{Binding user.EmailAddress}" Placeholder="Adres email" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing">
+                                        <Entry.Behaviors>
+                                            <behaviors:EmailAddressBehavior x:Name="emailAddressValidator"/>
+                                        </Entry.Behaviors>
+                                    </Entry>
+                                    <Label x:Name="emailAddressErrorLabel" FontSize="9" Margin="10,-5,0,0"
+                                           TextColor="Red" Style="{Binding Source={x:Reference emailAddressValidator}, 
+                                           Path=IsValid, Converter={StaticResource boolToInvalidInputStyle}}"
+                                           />
+                                </StackLayout>
+
+                            </StackLayout>
+                        </Grid>
                     </Grid>
                 </ScrollView>
             </StackLayout>
-            <StackLayout VerticalOptions="End">
-                
+            <StackLayout VerticalOptions="End" BackgroundColor="Blue" HeightRequest="50">
+                <Label HorizontalOptions="Center" Text="{Binding Price, StringFormat='Zamawiam ({0} PLN)'}" d:Text="Zamawiam (30,00 PLN)"
+                       TextColor="White" FontSize="18" FontAttributes="Bold"
+                       Margin="0,10,0,0">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OrderCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

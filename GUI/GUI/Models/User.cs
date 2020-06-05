@@ -12,9 +12,11 @@ namespace GUI.Models
         public int Id { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
-        public string Address { get; set; }
+        public Address Address { get; set; } = new Address();
         public string EmailAddress { get; set; }
         public string PhoneNumber { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
     }
 }
