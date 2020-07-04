@@ -7,9 +7,71 @@
              x:Class="GUI.Views.AccountPage">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms:AccountPage!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <Grid>
+                <StackLayout>
+                    <Frame BackgroundColor="Aqua" HeightRequest="110" 
+                           HorizontalOptions="FillAndExpand">
+                        
+                    </Frame>
+                </StackLayout>
+                <StackLayout Margin="15, 70, 15 ,0">
+                    <Frame BackgroundColor="White" HasShadow="True"
+                           HeightRequest="360" HorizontalOptions="FillAndExpand">
+                        <StackLayout>
+                            <StackLayout>
+                                <Button BackgroundColor="Blue"
+                                    HeightRequest="50" CornerRadius="24"
+                                    Text="Zaloguj się przez facebook" TextColor="White"
+                                     />
+                            </StackLayout>
+
+                            <StackLayout>
+                                <Grid>
+                                    <BoxView HorizontalOptions="FillAndExpand" HeightRequest="2" Color="DarkGray"
+                                             Margin="0,25"/>
+
+                                </Grid>
+                            </StackLayout>
+                            
+                            <StackLayout Margin="0,0,0,0">
+                                <Frame BackgroundColor="Transparent" 
+                                       BorderColor="DarkGray" CornerRadius="50"
+                                       HorizontalOptions="FillAndExpand">
+                                    <Entry Placeholder="Email" TextColor="Black"
+                                           HorizontalOptions="FillAndExpand" Margin="0,-20"/>
+                                </Frame>
+                                <Label HorizontalOptions="StartAndExpand"
+                                       Text="test" TextColor="Red"
+                                       Margin="20,0,0,-10" IsVisible="False"/>
+                            </StackLayout>
+                            <StackLayout Margin="0,15,0,0">
+                                <Frame BackgroundColor="Transparent" 
+                                       BorderColor="DarkGray" CornerRadius="50"
+                                       HorizontalOptions="FillAndExpand">
+                                    <Entry Placeholder="Hasło" TextColor="Black"
+                                           HorizontalOptions="FillAndExpand" Margin="0,-20"
+                                           IsPassword="True"/>
+                                </Frame>
+                                <Label HorizontalOptions="StartAndExpand"
+                                       Text="test" TextColor="Red"
+                                       Margin="20,0,0,0" IsVisible="False"/>
+                            </StackLayout>
+                            <Label Text="Nie pamiętam hasła!" HorizontalOptions="End"
+                                   TextColor="#db1f8a"/>
+                            <Button Text="Zaloguj się" Margin="0,10,0,0" 
+                                    BackgroundColor="#9a45f5" CornerRadius="24"
+                                    FontAttributes="Bold"
+                                    TextColor="White"/>
+                            <StackLayout Orientation="Horizontal" Margin="0,10,0,0" HorizontalOptions="Center">
+                                <Label Text="Nie masz konta?" HorizontalOptions="Start"
+                                   TextColor="Black"/>
+                                <Label Text="Zarejestruj się" HorizontalOptions="End"
+                                   TextColor="#db1f8a"/>
+                            </StackLayout>
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -36,11 +36,9 @@ namespace GUI.Views
                 {
                     new AppMasterDetailPageMasterMenuItem { Id = 0, Title = "Strona główna", TargetType = typeof(MainPage), 
                         Image = "home.png" },
-                    new AppMasterDetailPageMasterMenuItem { Id = 1, Title = "Okazje", TargetType = typeof(OcasionPage),
-                        Image = "occassion.png" },
-                    new AppMasterDetailPageMasterMenuItem { Id = 3, Title = "Moje konto", TargetType = typeof(AccountPage),
+                    new AppMasterDetailPageMasterMenuItem { Id = 3, Title = "Logowanie", TargetType = typeof(AccountPage),
                         Image = "account.png"},
-                    new AppMasterDetailPageMasterMenuItem { Id = 4, Title = "Kontakt", TargetType = typeof(MainPage),
+                    new AppMasterDetailPageMasterMenuItem { Id = 4, Title = "Restauracje", TargetType = typeof(MainPage),
                         Image = "contact.png"}
                 });
             }

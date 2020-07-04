@@ -92,10 +92,34 @@ namespace GUI.ViewModels
 				Price += pizza.CostOfOne;
 			});
 
-		public ICommand OrderCommand => new Command(
-			() =>
+		public ICommand OrderCommand => new Command<bool>(
+			async (bool canExecute) =>
 			{
+				if(Pizzas.Count == 0)
+				{
+					await Application.Current.MainPage.DisplayAlert("", "Koszyk nie może być pusty!", "OK");
+				}
+				else if(canExecute)
+				{
+					Pizzas.Clear();
+					if(!user.Loged)
+					{
+						user.FirstName = "";
+						user.Address = new Address();
+						user.EmailAddress = "";
+						user.LastName = "";
+						user.PhoneNumber = "";
+					}
 
+					await Application.Current.MainPage.DisplayAlert("", "Zamówienie przyjęte do realizacji", "OK");
+					var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
+					await navigation.PopAsync();
+				}
+				else
+				{
+					await Application.Current.MainPage.DisplayAlert("", "Nie wszystkie pola zostały poprawnie wypełnione!", "OK");
+				}
+				
 			});
 	}
 }
