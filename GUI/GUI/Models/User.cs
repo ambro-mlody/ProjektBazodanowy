@@ -10,13 +10,13 @@ namespace GUI.Models
         public Chart UserChart { get; set; } = new Chart();
 
         public int Id { get; set; }
-        public string Login { get; set; }
+        public string EmailAddress { get; set; }
         public string Password { get; set; }
         public Address Address { get; set; } = new Address();
-        public string EmailAddress { get; set; }
         public string PhoneNumber { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public bool LogedByFacebook { get; set; }
 
     }
 }

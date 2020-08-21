@@ -22,7 +22,7 @@
                                 <Button BackgroundColor="Blue"
                                     HeightRequest="50" CornerRadius="24"
                                     Text="Zaloguj się przez facebook" TextColor="White"
-                                     />
+                                     Command="{ Binding logInFacebookCommand}"/>
                             </StackLayout>
 
                             <StackLayout>
@@ -38,7 +38,9 @@
                                        BorderColor="DarkGray" CornerRadius="50"
                                        HorizontalOptions="FillAndExpand">
                                     <Entry Placeholder="Email" TextColor="Black"
-                                           HorizontalOptions="FillAndExpand" Margin="0,-20"/>
+                                           HorizontalOptions="FillAndExpand" Margin="0,-20"
+                                           ClearButtonVisibility="WhileEditing"
+                                           Text="{Binding email, Mode=TwoWay}"/>
                                 </Frame>
                                 <Label HorizontalOptions="StartAndExpand"
                                        Text="test" TextColor="Red"
@@ -50,23 +52,38 @@
                                        HorizontalOptions="FillAndExpand">
                                     <Entry Placeholder="Hasło" TextColor="Black"
                                            HorizontalOptions="FillAndExpand" Margin="0,-20"
-                                           IsPassword="True"/>
+                                           IsPassword="True" ClearButtonVisibility="WhileEditing"
+                                           Text="{Binding password, Mode=TwoWay}"/>
                                 </Frame>
                                 <Label HorizontalOptions="StartAndExpand"
                                        Text="test" TextColor="Red"
                                        Margin="20,0,0,0" IsVisible="False"/>
                             </StackLayout>
                             <Label Text="Nie pamiętam hasła!" HorizontalOptions="End"
-                                   TextColor="#db1f8a"/>
+                                   TextColor="#db1f8a"
+                                   >
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding forgotPasswordCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
                             <Button Text="Zaloguj się" Margin="0,10,0,0" 
                                     BackgroundColor="#9a45f5" CornerRadius="24"
                                     FontAttributes="Bold"
-                                    TextColor="White"/>
+                                    TextColor="White"
+                                    Command="{Binding logInCommand}"/>
                             <StackLayout Orientation="Horizontal" Margin="0,10,0,0" HorizontalOptions="Center">
                                 <Label Text="Nie masz konta?" HorizontalOptions="Start"
                                    TextColor="Black"/>
                                 <Label Text="Zarejestruj się" HorizontalOptions="End"
-                                   TextColor="#db1f8a"/>
+                                   TextColor="#db1f8a">
+
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                        Command="{Binding signUpCommand}" />
+                                    </Label.GestureRecognizers>
+                                </Label>
+                                       
                             </StackLayout>
                         </StackLayout>
                     </Frame>
