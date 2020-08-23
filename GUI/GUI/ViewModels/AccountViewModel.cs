@@ -2,13 +2,8 @@
 using GUI.Views;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
-using static GUI.Views.AppMasterDetailPageMaster;
 
 namespace GUI.ViewModels
 {
@@ -26,83 +21,6 @@ namespace GUI.ViewModels
 			Street = ((App)Application.Current).MainUser.Address.Street;
 			HouseNumber = ((App)Application.Current).MainUser.Address.HouseNumber;
 			LocalNumber = ((App)Application.Current).MainUser.Address.LocalNumber;
-		}
-
-		public async Task StoreUserInDBAsync()
-		{
-			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
-			{
-				conn.Open();
-
-				SqlCommand storeUser = new SqlCommand("UpdateUserDataSP", conn);
-
-				storeUser.CommandType = CommandType.StoredProcedure;
-
-				storeUser.Parameters.Add(new SqlParameter("@id", int.Parse(((App)Application.Current).MainUser.Id)));
-				storeUser.Parameters.Add(new SqlParameter("@email", Email));
-				storeUser.Parameters.Add(new SqlParameter("@firstName", FirstName));
-				storeUser.Parameters.Add(new SqlParameter("@lastName", LastName));
-				storeUser.Parameters.Add(new SqlParameter("@phoneNumber", PhoneNumber));
-
-				if(((App)Application.Current).MainUser.Address.Id != "")
-				{
-					storeUser.Parameters.Add(new SqlParameter("@addressId", int.Parse(((App)Application.Current).MainUser.Address.Id)));
-				}
-				else
-				{
-					int id = await CreateAddressDataAsyc();
-					storeUser.Parameters.Add(new SqlParameter("@addressId", id));
-				}
-
-				storeUser.Parameters.Add(new SqlParameter("@city", City));
-				storeUser.Parameters.Add(new SqlParameter("@street", Street));
-				storeUser.Parameters.Add(new SqlParameter("@houseNumber", HouseNumber));
-				storeUser.Parameters.Add(new SqlParameter("@localNumber", LocalNumber));
-				storeUser.Parameters.Add(new SqlParameter("@postCode", PostCode));
-
-				await storeUser.ExecuteNonQueryAsync();
-			}
-		}
-
-		private async Task<int> CreateAddressDataAsyc()
-		{
-
-			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
-			{
-				conn.Open();
-
-				SqlCommand createAddress = new SqlCommand("CreateAddressSP", conn);
-
-				createAddress.CommandType = CommandType.StoredProcedure;
-
-				createAddress.Parameters.Add(new SqlParameter("@city", City));
-				createAddress.Parameters.Add(new SqlParameter("@street", Street));
-				createAddress.Parameters.Add(new SqlParameter("@houseNumber", HouseNumber));
-				createAddress.Parameters.Add(new SqlParameter("@localNumber", LocalNumber));
-				createAddress.Parameters.Add(new SqlParameter("@postCode", PostCode));
-
-				using (SqlDataReader insertedAddressId = await createAddress.ExecuteReaderAsync())
-				{
-					insertedAddressId.Read();
-					return int.Parse(insertedAddressId.GetValue(0).ToString());
-				}
-			}
-		}
-
-		private async Task DeleteUserFromDBAsync()
-		{
-			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
-			{
-				conn.Open();
-
-				SqlCommand storeUser = new SqlCommand("DeleteUserSP", conn);
-
-				storeUser.CommandType = CommandType.StoredProcedure;
-
-				storeUser.Parameters.Add(new SqlParameter("@id", int.Parse(((App)Application.Current).MainUser.Id)));
-
-				await storeUser.ExecuteNonQueryAsync();
-			}
 		}
 
 		private string email;
@@ -222,11 +140,15 @@ namespace GUI.ViewModels
 			}
 		}
 
-		public ICommand CHangePasswordCommand => new Command(
+		public ICommand ChangePasswordCommand => new Command(
 			async () =>
 			{
-				await Application.Current.MainPage.DisplayAlert("Zmiana!", "Tu będzie zmiana hasła.",
-						"Tak", "Nie");
+				var viewModel = new ChangePasswordViewModel();
+				var detailsPage = new ChangePasswordPage { BindingContext = viewModel };
+				detailsPage.Title = "Zmien Haslo";
+
+				var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
+				await navigation.PushAsync(detailsPage, true);
 			});
 
 		public ICommand DeleteAccountCommand => new Command(
@@ -237,9 +159,11 @@ namespace GUI.ViewModels
 
 				if (res)
 				{
-					await DeleteUserFromDBAsync();
+					await DBConnection.DeleteUserFromDBAsync();
 
-					setUpLogInPage();
+					LoginAccounPageChanges.setUpLogInPage();
+
+					LoginAccounPageChanges.GoToLoginPage();
 				}
 				
 			});
@@ -252,27 +176,12 @@ namespace GUI.ViewModels
 
 				if(res)
 				{
-					await StoreUserInDBAsync();
-					setUpLogInPage();
+					await DBConnection.UpdateUserInDBAsync();
+
+					LoginAccounPageChanges.setUpLogInPage();
+
+					LoginAccounPageChanges.GoToLoginPage();
 				}
-				
-
 			});
-
-		private void setUpLogInPage()
-		{
-			((App)Application.Current).MainUser = new User();
-
-			((MasterDetailPage)Application.Current.MainPage).Detail = new NavigationPage(
-															new LogInPage
-															{
-																BindingContext = new LogInViewModel(),
-																Title = "Moje Konto"
-															});
-
-			var view_model = (AppMasterDetailPageMasterViewModel)((MasterDetailPage)Application.Current.MainPage).Master.BindingContext;
-			view_model.MenuItems[1].TargetType = typeof(LogInPage);
-			view_model.MenuItems[1].Title = "Moje Konto";
-		}
 	}
 }

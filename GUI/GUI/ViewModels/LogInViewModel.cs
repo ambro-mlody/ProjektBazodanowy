@@ -3,8 +3,7 @@ using GUI.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Text;
@@ -13,7 +12,6 @@ using System.Windows.Input;
 using Xamarin.Auth;
 using Xamarin.Auth.Presenters;
 using Xamarin.Forms;
-using static GUI.Views.AppMasterDetailPageMaster;
 
 namespace GUI.ViewModels
 {
@@ -74,285 +72,88 @@ namespace GUI.ViewModels
 
 		private async void OnAuthenticationCompleted(object sender, AuthenticatorCompletedEventArgs e)
 		{
-			if(e.IsAuthenticated)
+			if (e.IsAuthenticated)
 			{
 				var accessToken = e.Account.Properties["access_token"];
 				((App)Application.Current).MainUser.Loged = true;
 
-				var view_model = (AppMasterDetailPageMasterViewModel)((MasterDetailPage)Application.Current.MainPage).Master.BindingContext;
-				view_model.MenuItems[1].TargetType = typeof(AccountPage);
-				view_model.MenuItems[1].Title = "Moje Konto";
+				LoginAccounPageChanges.ShowAccountPageInMenuSetup();
 
 				var profile = await getFacebookUserAsync(accessToken);
 
-				using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
+				((App)Application.Current).MainUser.EmailAddress = profile.email;
+
+				int userId = await DBConnection.GetUserIdFromEmailAsync();
+
+				if (userId != -1)
 				{
-					conn.Open();
+					await DBConnection.GetUserDataAsync(userId);
 
-					SqlCommand searchEmail = new SqlCommand("EmailExistsSP", conn);
+					LoginAccounPageChanges.GoToAccountPage();
+				}
+				else
+				{
+					await DBConnection.StoreFacebookUserAsync(profile);
 
-					searchEmail.CommandType = CommandType.StoredProcedure;
-
-					searchEmail.Parameters.Add(new SqlParameter("@email", profile.email));
-
-					using (SqlDataReader userEmail = await searchEmail.ExecuteReaderAsync())
-					{
-						if (userEmail.HasRows)
-						{
-							userEmail.Read();
-							int userId = (int)userEmail.GetValue(0);
-							userEmail.Close();
-							SqlCommand getUserData = new SqlCommand("GetUserInfoSP", conn);
-
-							getUserData.CommandType = CommandType.StoredProcedure;
-
-							getUserData.Parameters.Add(new SqlParameter("@userId", userId));
-
-							using (SqlDataReader userData = await getUserData.ExecuteReaderAsync())
-							{
-								userData.Read();
-								
-								User user = new User()
-								{
-									Loged = true,
-									Id = userData.GetValue(0).ToString(),
-									EmailAddress = userData.GetValue(1).ToString(),
-									Password = userData.GetValue(2).ToString(),
-									PhoneNumber = userData.GetValue(4).ToString(),
-									FirstName = userData.GetValue(5).ToString(),
-									LastName = userData.GetValue(6).ToString(),
-									LogedByFacebook = userData.GetValue(7).ToString() == "T" ? true : false,
-									Salt = userData.GetValue(8).ToString(),
-								};
-
-								var address = userData.GetValue(3).ToString();
-								var Address = new Address();
-								if (address.Length == 0)
-								{
-								}
-								else
-								{
-									userData.Close();
-
-									SqlCommand getUserAddress = new SqlCommand("GetUserAddressSP", conn);
-
-									getUserAddress.CommandType = CommandType.StoredProcedure;
-
-									getUserAddress.Parameters.Add(new SqlParameter("@addressId", int.Parse(address)));
-
-									using (SqlDataReader userAddress = await getUserAddress.ExecuteReaderAsync())
-									{
-										userAddress.Read();
-										Address = new Address()
-										{
-											City = userAddress.GetValue(1).ToString(),
-											Street = userAddress.GetValue(2).ToString(),
-											HouseNumber = userAddress.GetValue(3).ToString(),
-											LocalNumber = userAddress.GetValue(4).ToString(),
-											PostCode = userAddress.GetValue(5).ToString()
-										};
-									}
-								}
-								user.Address = Address;
-
-								((App)Application.Current).MainUser = user;
-
-								((MasterDetailPage)Application.Current.MainPage).Detail = new NavigationPage(
-																new AccountPage
-																{
-																	BindingContext = new AccountViewModel(),
-																	Title = "Moje Konto"
-																});
-							}
-						}
-						else
-						{
-							userEmail.Close();
-							SqlCommand storeFbUser = new SqlCommand("StoreFacebookUserSP", conn);
-
-							storeFbUser.CommandType = CommandType.StoredProcedure;
-
-							storeFbUser.Parameters.Add(new SqlParameter("@email", profile.email));
-							storeFbUser.Parameters.Add(new SqlParameter("@firstName", profile.first_name));
-							storeFbUser.Parameters.Add(new SqlParameter("@lastName", profile.last_name));
-
-							((App)Application.Current).MainUser.EmailAddress = profile.email;
-							((App)Application.Current).MainUser.FirstName = profile.first_name;
-							((App)Application.Current).MainUser.LastName = profile.last_name;
-
-							await storeFbUser.ExecuteNonQueryAsync();
-
-							((MasterDetailPage)Application.Current.MainPage).Detail = new NavigationPage(
-																new AccountPage
-																{
-																	BindingContext = new AccountViewModel(),
-																	Title = "Moje Konto"
-																});
-						}
-					}
+					LoginAccounPageChanges.GoToAccountPage();
 				}
 			}
 		}
 
-		public struct fbProfile
-		{
-			public string email;
-			public string first_name;
-			public string last_name;
-		}
-
-		public async Task<fbProfile> getFacebookUserAsync(string accessToken)
+		public async Task<FBProfile> getFacebookUserAsync(string accessToken)
 		{
 			var client = new HttpClient();
 
 			var userJson = await client.GetStringAsync($"https://graph.facebook.com/me?fields=email,first_name,last_name&access_token={accessToken}");
 
-			var profile = JsonConvert.DeserializeObject<fbProfile>(userJson);
+			var profile = JsonConvert.DeserializeObject<FBProfile>(userJson);
 			return profile;
 		}
 
-		public ICommand forgotPasswordCommand => new Command(
-			async () =>
-			{
-				bool res = await Application.Current.MainPage.DisplayAlert("Resetowanie hasla!", "Czy jeses pewien, ze chcesz zresetowac haslo?",
-						"Tak", "Nie");
-
-				if(res)
-				{
-					 
-				}
-			});
+		
 
 		public ICommand logInCommand => new Command(
 			async () =>
 			{
-				
 				if (email.Length != 0 && password.Length != 0)
 				{
 					try
 					{
-						MailAddress m = new MailAddress(email);
+						MailAddress mail = new MailAddress(email);
 
-						using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
-						{
-							conn.Open();
-
-							SqlCommand searchEmail = new SqlCommand("EmailExistsSP", conn);
-
-							searchEmail.CommandType = CommandType.StoredProcedure;
-
-							searchEmail.Parameters.Add(new SqlParameter("@email", email));
-
-							using (SqlDataReader userEmail = await searchEmail.ExecuteReaderAsync())
-							{
-								if (userEmail.HasRows)
-								{
-									userEmail.Read();
-									int userId = (int)userEmail.GetValue(0);
-									userEmail.Close();
-									SqlCommand getUserPassword = new SqlCommand("GetUserPasswordSP", conn);
-
-									getUserPassword.CommandType = CommandType.StoredProcedure;
-
-									getUserPassword.Parameters.Add(new SqlParameter("@userId", userId));
-
-									using (SqlDataReader userPassword = await getUserPassword.ExecuteReaderAsync())
-									{
-										userPassword.Read();
-										var Password = userPassword.GetValue(0).ToString();
-										userPassword.Close();
-
-										if(password == Password) // hashowanie
-										{
-											var view_model = (AppMasterDetailPageMasterViewModel)((MasterDetailPage)Application.Current.MainPage).Master.BindingContext;
-											view_model.MenuItems[1].TargetType = typeof(AccountPage);
-											view_model.MenuItems[1].Title = "Moje Konto";
-
-											SqlCommand getUserData = new SqlCommand("GetUserInfoSP", conn);
-
-											getUserData.CommandType = CommandType.StoredProcedure;
-
-											getUserData.Parameters.Add(new SqlParameter("@userId", userId));
-
-											using (SqlDataReader userData = await getUserData.ExecuteReaderAsync())
-											{
-												userData.Read();
-
-												User user = new User()
-												{
-													Loged = true,
-													Id = userData.GetValue(0).ToString(),
-													EmailAddress = userData.GetValue(1).ToString(),
-													Password = userData.GetValue(2).ToString(),
-													PhoneNumber = userData.GetValue(4).ToString(),
-													FirstName = userData.GetValue(5).ToString(),
-													LastName = userData.GetValue(6).ToString(),
-													LogedByFacebook = userData.GetValue(7).ToString() == "T" ? true : false,
-													Salt = userData.GetValue(8).ToString(),
-												};
-
-												var address = userData.GetValue(3).ToString();
-												var Address = new Address() { Id = address };
-												if (address.Length == 0)
-												{
-												}
-												else
-												{
-													userData.Close();
-
-													SqlCommand getUserAddress = new SqlCommand("GetUserAddressSP", conn);
-
-													getUserAddress.CommandType = CommandType.StoredProcedure;
-
-													getUserAddress.Parameters.Add(new SqlParameter("@addressId", int.Parse(address)));
-
-													using (SqlDataReader userAddress = await getUserAddress.ExecuteReaderAsync())
-													{
-														userAddress.Read();
-														Address = new Address()
-														{
-															Id = userAddress.GetValue(0).ToString(),
-															City = userAddress.GetValue(1).ToString(),
-															Street = userAddress.GetValue(2).ToString(),
-															HouseNumber = userAddress.GetValue(3).ToString(),
-															LocalNumber = userAddress.GetValue(4).ToString(),
-															PostCode = userAddress.GetValue(5).ToString()
-														};
-													}
-												}
-												user.Address = Address;
-
-												((App)Application.Current).MainUser = user;
-
-												((MasterDetailPage)Application.Current.MainPage).Detail = new NavigationPage(
-																new AccountPage
-																{
-																	BindingContext = new AccountViewModel(),
-																	Title = "Moje Konto"
-																});
-											}
-										}
-										else
-										{
-											await Application.Current.MainPage.DisplayAlert("Uwaga!", "Niepoprawne Hasło.", "Ok");
-											password = "";
-										}
-									}
-								}
-								else
-								{
-									await Application.Current.MainPage.DisplayAlert("Uwaga!", "Niepoprawny Email.",
-									"Ok");
-								}
-							}
-						}
+						((App)Application.Current).MainUser.EmailAddress = email;
 					}
 					catch
 					{
 						await Application.Current.MainPage.DisplayAlert("Uwaga!", "Niepoprawny Email.",
 							"Ok");
 					}
-					
+
+					int userId = await DBConnection.GetUserIdFromEmailAsync();
+
+					if(userId != -1)
+					{
+						string userPassword = await DBConnection.GetUserPasswordAsync(userId);
+
+						if (Hashing.ValidatePassword(password, userPassword))
+						{
+							LoginAccounPageChanges.ShowAccountPageInMenuSetup();
+
+							await DBConnection.GetUserDataAsync(userId);
+
+							LoginAccounPageChanges.GoToAccountPage();
+						}
+						else
+						{
+							await Application.Current.MainPage.DisplayAlert("Uwaga!", "Niepoprawne Hasło.", "Ok");
+							password = "";
+						}
+					}
+					else
+					{
+						await Application.Current.MainPage.DisplayAlert("Błąd!", "Podany email nie jest powiązany z żadnym kontem!",
+																				"Ok");
+					}
 				}
 				else
 				{
@@ -361,7 +162,79 @@ namespace GUI.ViewModels
 
 					password = "";
 				}
-				
+			});
+
+		public ICommand signUpCommand => new Command(
+			async () =>
+			{
+				var viewModel = new SignUpViewModel();
+				var detailsPage = new SignUpPage { BindingContext = viewModel };
+				detailsPage.Title = "Zarejestruj sie";
+
+				var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
+				await navigation.PushAsync(detailsPage, true);
+			});
+
+		public ICommand forgotPasswordCommand => new Command(
+			async () =>
+			{
+				bool res = await Application.Current.MainPage.DisplayAlert("Resetowanie hasla!", "Czy jeses pewien, ze chcesz zresetowac haslo?",
+						"Tak", "Nie");
+
+				if (res)
+				{
+					if(email != "")
+					{
+						try
+						{
+							MailAddress mail = new MailAddress(email);
+
+							((App)Application.Current).MainUser.EmailAddress = email;
+
+							int userId = await DBConnection.GetUserIdFromEmailAsync();
+
+							if(userId != -1)
+							{
+								((App)Application.Current).MainUser.Id = userId.ToString();
+
+								var code = EmailSender.GenerateCode();
+
+								EmailSender sender = new EmailSender(
+									mail,
+									"Zmiana Hasła",
+									$"Twój kod do zmiany hasła: {code}");
+
+								await sender.SendMailAsync();
+
+								await Application.Current.MainPage.DisplayAlert("Uwaga!", "Kod do zmiany hasła został wysłany na twojego emaila.",
+								"Ok");
+
+								var viewModel = new ForgotPasswordViewModel(code);
+								var detailsPage = new ForgotPasswordPage { BindingContext = viewModel };
+								detailsPage.Title = "Zmiana Hasla";
+
+								var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
+								await navigation.PushAsync(detailsPage, true);
+							}
+							else
+							{
+								await Application.Current.MainPage.DisplayAlert("Błąd!", "Podany email nie jest powiązany z żadnym kontem!",
+																				"Ok");
+							}
+							
+						}
+						catch
+						{
+							await Application.Current.MainPage.DisplayAlert("Błąd!", "Email nie jest poprawny!",
+							"Ok");
+						}
+					}
+					else
+					{
+						await Application.Current.MainPage.DisplayAlert("Błąd!", "Email nie może być pusty!",
+						"Ok");
+					}
+				}
 			});
 
 		public LogInViewModel()

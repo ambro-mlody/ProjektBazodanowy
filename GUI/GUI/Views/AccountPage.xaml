@@ -91,7 +91,7 @@
                                 <Label Text="Zmień Hasło!" FontSize="14" 
                                    TextColor="Blue" FontAttributes="Bold" TextDecorations="Underline" >
                                     <Label.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding CHangePasswordCommand}" />
+                                        <TapGestureRecognizer Command="{Binding ChangePasswordCommand}" />
                                     </Label.GestureRecognizers>
                                 </Label>
                             </StackLayout>
@@ -128,7 +128,7 @@
                                     FontAttributes="Bold"
                                     TextColor="White"
                                     Command="{Binding LogOutCommand}"/>
-                            <Label Text="Usouń Konto" HorizontalOptions="Center"
+                            <Label Text="Usuń Konto" HorizontalOptions="Center"
                                    TextColor="#db1f8a">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding DeleteAccountCommand}"/>

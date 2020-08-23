@@ -1,4 +1,5 @@
-﻿using GUI.ViewModels;
+﻿using GUI.Models;
+using GUI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +22,9 @@ namespace GUI.Views
 
         protected async override void OnDisappearing()
         {
-            var viewModel = (AccountViewModel)BindingContext;
             if(((App)Application.Current).MainUser.Loged)
             {
-                await viewModel.StoreUserInDBAsync();
+                await DBConnection.UpdateUserInDBAsync();
             }
 
             base.OnDisappearing();

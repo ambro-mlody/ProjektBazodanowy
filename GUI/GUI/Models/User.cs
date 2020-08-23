@@ -17,6 +17,5 @@ namespace GUI.Models
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";
         public bool LogedByFacebook { get; set; } = false;
-        public string Salt { get; set; } = "";
     }
 }
