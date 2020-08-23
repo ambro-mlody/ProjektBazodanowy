@@ -26,7 +26,7 @@ namespace GUI.Views
             ListView = MenuItemsListView;
         }
 
-        class AppMasterDetailPageMasterViewModel : INotifyPropertyChanged
+        public class AppMasterDetailPageMasterViewModel : INotifyPropertyChanged
         {
             public ObservableCollection<AppMasterDetailPageMasterMenuItem> MenuItems { get; set; }
 
@@ -36,9 +36,9 @@ namespace GUI.Views
                 {
                     new AppMasterDetailPageMasterMenuItem { Id = 0, Title = "Strona główna", TargetType = typeof(MainPage), 
                         Image = "home.png" },
-                    new AppMasterDetailPageMasterMenuItem { Id = 3, Title = "Logowanie", TargetType = typeof(AccountPage),
+                    new AppMasterDetailPageMasterMenuItem { Id = 1, Title = "Moje Konto", TargetType = typeof(LogInPage),
                         Image = "account.png"},
-                    new AppMasterDetailPageMasterMenuItem { Id = 4, Title = "Restauracje", TargetType = typeof(MainPage),
+                    new AppMasterDetailPageMasterMenuItem { Id = 2, Title = "Restauracje", TargetType = typeof(MainPage),
                         Image = "contact.png"}
                 });
             }

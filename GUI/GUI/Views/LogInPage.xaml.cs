@@ -11,10 +11,11 @@ using Xamarin.Forms.Xaml;
 namespace GUI.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class AccountPage : ContentPage
+    public partial class LogInPage : ContentPage
     {
-        public AccountPage()
+        public LogInPage()
         {
+            
             InitializeComponent();
             BindingContext = new LogInViewModel();
         }

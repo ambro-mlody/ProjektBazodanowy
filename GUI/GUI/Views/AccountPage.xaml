@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:behaviors="clr-namespace:GUI.Behaviors"
+             xmlns:system="clr-namespace:System;assembly=netstandard"
+             mc:Ignorable="d"
+             x:Name="accountPage"
+             x:Class="GUI.Views.AccountPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <system:Boolean x:Key="False">False</system:Boolean>
+            <system:Boolean x:Key="True">True</system:Boolean>
+
+            <behaviors:BoolToLabelConverter x:Key="boolToNotEmptyStyle" 
+                                            x:TypeArguments="Style">
+                <behaviors:BoolToLabelConverter.FalseLabel>
+                    <Style TargetType="Label">
+                        <Setter Property="Text" Value="Pole nie może być puste!" />
+                        <Setter Property="IsVisible" Value="True"/>
+                    </Style>
+                </behaviors:BoolToLabelConverter.FalseLabel>
+                <behaviors:BoolToLabelConverter.TrueLabel>
+                    <Style TargetType="Label">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </Style>
+                </behaviors:BoolToLabelConverter.TrueLabel>
+            </behaviors:BoolToLabelConverter>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <ScrollView>
+            <Grid>
+                <StackLayout>
+                    <Frame BackgroundColor="Aqua" HeightRequest="110" 
+                           HorizontalOptions="FillAndExpand">
+
+                    </Frame>
+                </StackLayout>
+                <StackLayout Margin="15, 30, 15 ,0">
+                    <Frame BackgroundColor="White" HasShadow="True"
+                           HeightRequest="700" HorizontalOptions="FillAndExpand">
+                        <StackLayout>
+                            <StackLayout>
+                                <Label Text="Moje dane: " FontSize="14" 
+                                   TextColor="Black" FontAttributes="Bold" />
+                            </StackLayout>
+
+                            <StackLayout>
+                                <Grid>
+                                    <BoxView HorizontalOptions="FillAndExpand" HeightRequest="3" Color="DarkGray"
+                                             Margin="0,0"/>
+
+                                </Grid>
+                            </StackLayout>
+
+                            <Entry Text="{Binding Email}" Placeholder="Email" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing" IsReadOnly="True"/>
+
+                            <StackLayout>
+                                <Entry Text="{Binding FirstName}" Placeholder="Imie" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing">
+                                    <Entry.Behaviors>
+                                        <behaviors:NotEmptyBehavior x:Name="firstNameValidator"/>
+                                    </Entry.Behaviors>
+                                </Entry>
+                                <Label x:Name="firstNameErrorLabel" FontSize="9" Margin="10,-5,0,0"
+                                           TextColor="Red" Style="{Binding Source={x:Reference firstNameValidator}, 
+                                           Path=IsValid, Converter={StaticResource boolToNotEmptyStyle}}"/>
+                            </StackLayout>
+
+                            <StackLayout>
+                                <Entry Text="{Binding LastName}" Placeholder="Nazwisko" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing">
+                                    <Entry.Behaviors>
+                                        <behaviors:NotEmptyBehavior x:Name="lastNameValidator"/>
+                                    </Entry.Behaviors>
+                                </Entry>
+                                <Label x:Name="lastNameErrorLabel" FontSize="9" Margin="10,-5,0,0"
+                                           TextColor="Red" Style="{Binding Source={x:Reference lastNameValidator}, 
+                                           Path=IsValid, Converter={StaticResource boolToNotEmptyStyle}}"/>
+                            </StackLayout>
+
+                            <Entry Text="{Binding PhoneNUmber}" Placeholder="Numer Telefonu" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing"/>
+
+                            <StackLayout Margin="0,10,0,0" Orientation="Horizontal">
+                                <Label Text="Zmień Hasło!" FontSize="14" 
+                                   TextColor="Blue" FontAttributes="Bold" TextDecorations="Underline" >
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding CHangePasswordCommand}" />
+                                    </Label.GestureRecognizers>
+                                </Label>
+                            </StackLayout>
+
+                            <StackLayout Margin="0, 10, 0 ,0">
+                                <Label Text="Adres: " FontSize="14" 
+                                   TextColor="Black" FontAttributes="Bold" />
+                            </StackLayout>
+
+                            <StackLayout>
+                                <Grid>
+                                    <BoxView HorizontalOptions="FillAndExpand" HeightRequest="3" Color="DarkGray"
+                                             Margin="0,0"/>
+                                </Grid>
+                            </StackLayout>
+
+                            <Entry Text="{Binding City}" Placeholder="Miasto" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing"/>
+
+                            <Entry Text="{Binding PostCode}" Placeholder="Kod Pocztowy" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing"/>
+
+                            <Entry Text="{Binding Street}" Placeholder="Ulica" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing"/>
+
+                            <Entry Text="{Binding HouseNumber}" Placeholder="Numer Domu" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing"/>
+
+                            <Entry Text="{Binding LocalNumber}" Placeholder="Numer Mieszkania" TextColor="Black" FontSize="12"
+                                       ClearButtonVisibility="WhileEditing"/>
+
+                            <Button Text="Wyloguj się" Margin="0,20,0,0" 
+                                    BackgroundColor="#9a45f5" CornerRadius="24"
+                                    FontAttributes="Bold"
+                                    TextColor="White"
+                                    Command="{Binding LogOutCommand}"/>
+                            <Label Text="Usouń Konto" HorizontalOptions="Center"
+                                   TextColor="#db1f8a">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding DeleteAccountCommand}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
