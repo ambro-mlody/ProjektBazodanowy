@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using GUI.Models;
 using GUI.Views;
@@ -40,7 +41,12 @@ namespace GUI.ViewModels
 
         public MainViewModel()
         {
-            PizzaItems = makeSomeTestPizzas();
+            GetPizzas();
+        }
+
+        private async void GetPizzas()
+        {
+            PizzaItems = await DBConnection.GetPizzasFromDBAsync();
         }
 
         private ObservableCollection<PizzaItem> makeSomeTestPizzas()

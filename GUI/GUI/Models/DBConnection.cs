@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -262,6 +264,141 @@ namespace GUI.Models
 				storeUser.Parameters.Add(new SqlParameter("@addressId", int.Parse(((App)Application.Current).MainUser.Address.Id)));
 
 				await storeUser.ExecuteNonQueryAsync();
+			}
+		}
+
+		public static async Task<ObservableCollection<PizzaItem>> GetPizzasFromDBAsync()
+		{
+			var pizzas = new ObservableCollection<PizzaItem>();
+
+			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
+			{
+				conn.Open();
+
+				SqlCommand getPizzas = new SqlCommand("GetPizzasSP", conn);
+
+				getPizzas.CommandType = CommandType.StoredProcedure;
+
+				using (SqlDataReader pizzasReader = await getPizzas.ExecuteReaderAsync())
+				{
+					while(pizzasReader.Read())
+					{
+						int pizzaId = int.Parse(pizzasReader.GetValue(0).ToString());
+						int imageId = int.Parse(pizzasReader.GetValue(5).ToString());
+
+						var pizza = new PizzaItem
+						{
+							Id = pizzaId,
+							Name = pizzasReader.GetValue(1).ToString(),
+							Description = pizzasReader.GetValue(2).ToString(),
+							Price = double.Parse(pizzasReader.GetValue(3).ToString()),
+							PreperationTime = int.Parse(pizzasReader.GetValue(4).ToString()),
+							Ingredients = await GetIngredientsInPizzaAsync(pizzaId),
+							Image = await GetImageAsync(imageId)
+						};
+
+						pizzas.Add(pizza);
+					}
+
+				}
+			}
+			return pizzas;
+
+		}
+
+		public static async Task<ImageSource> GetImageAsync(int imageId)
+		{
+			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
+			{
+				conn.Open();
+
+				SqlCommand getImage = new SqlCommand("GetImageSP", conn);
+
+				getImage.CommandType = CommandType.StoredProcedure;
+
+				getImage.Parameters.Add(new SqlParameter("@imageId", imageId));
+
+				var img = await getImage.ExecuteScalarAsync();
+
+				return ImageSource.FromStream(() => new MemoryStream((byte[])img));
+			}
+		}	
+
+		public static async Task<List<string>> GetIngredientsInPizzaAsync(int pizzaId)
+		{
+			var ingredients = new List<string>();
+
+			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
+			{
+				conn.Open();
+
+				SqlCommand getIngredients = new SqlCommand("GetIngredientsSP", conn);
+
+				getIngredients.CommandType = CommandType.StoredProcedure;
+
+				getIngredients.Parameters.Add(new SqlParameter("@pizzaId", pizzaId));
+
+				using (SqlDataReader ingredientsReader = await getIngredients.ExecuteReaderAsync())
+				{
+					while (ingredientsReader.Read())
+					{
+						ingredients.Add(ingredientsReader.GetValue(1).ToString());
+					}
+				}
+			}
+
+			return ingredients;
+		}
+
+		public static async Task StoreOrderInfoAsync(User user)
+		{
+			int orderId;
+			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
+			{
+				conn.Open();
+
+				SqlCommand storeOrder = new SqlCommand("StoreOrderInfoSP", conn);
+
+				storeOrder.CommandType = CommandType.StoredProcedure;
+
+				storeOrder.Parameters.Add(new SqlParameter("@email", user.EmailAddress));
+				storeOrder.Parameters.Add(new SqlParameter("@firstName", user.FirstName));
+				storeOrder.Parameters.Add(new SqlParameter("@lastName", user.LastName));
+				storeOrder.Parameters.Add(new SqlParameter("@phoneNumber", user.PhoneNumber));
+				storeOrder.Parameters.Add(new SqlParameter("@city", user.Address.City));
+				storeOrder.Parameters.Add(new SqlParameter("@street", user.Address.Street));
+				storeOrder.Parameters.Add(new SqlParameter("@houseNumber", user.Address.HouseNumber));
+				storeOrder.Parameters.Add(new SqlParameter("@localNumber", user.Address.LocalNumber));
+				storeOrder.Parameters.Add(new SqlParameter("@postCode", user.Address.PostCode));
+				storeOrder.Parameters.Add(new SqlParameter("@cost", user.UserChart.Price));
+
+				orderId = (int)await storeOrder.ExecuteScalarAsync();
+
+			}
+
+			await StorePizzasInOrderAsync(user.UserChart.Pizzas, orderId);
+		}
+
+		public static async Task StorePizzasInOrderAsync(ObservableCollection<PizzaInChart> pizzas, int orderId)
+		{
+			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
+			{
+				conn.Open();
+
+				foreach(var pizza in pizzas)
+				{
+					SqlCommand storePizza = new SqlCommand("StorePizzaInOrderSP", conn);
+
+					storePizza.CommandType = CommandType.StoredProcedure;
+
+					storePizza.Parameters.Add(new SqlParameter("@pizzaId", pizza.Pizza.Id));
+					storePizza.Parameters.Add(new SqlParameter("@ammount", pizza.Amount));
+					storePizza.Parameters.Add(new SqlParameter("@priceOfOne", pizza.CostOfOne));
+					storePizza.Parameters.Add(new SqlParameter("@size", pizza.Size.Size));
+					storePizza.Parameters.Add(new SqlParameter("@orderId", orderId));
+
+					await storePizza.ExecuteNonQueryAsync();
+				}
 			}
 		}
 	}

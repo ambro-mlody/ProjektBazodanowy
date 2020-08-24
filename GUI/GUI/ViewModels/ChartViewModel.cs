@@ -101,6 +101,9 @@ namespace GUI.ViewModels
 				}
 				else if(canExecute)
 				{
+
+					await DBConnection.StoreOrderInfoAsync(user);
+
 					Pizzas.Clear();
 					if(!user.Loged)
 					{
