@@ -6,6 +6,10 @@ using Xamarin.Forms;
 
 namespace GUI.Behaviors
 {
+
+    /// <summary>
+    /// Klasa sprawdzająca poprawność kodu pocztowego.
+    /// </summary>
     public class PostCodeBehavior : BaseValidation
     {
         protected override void OnEntryTextChanged(object sender, TextChangedEventArgs args)

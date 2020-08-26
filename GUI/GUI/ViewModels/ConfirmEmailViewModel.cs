@@ -7,8 +7,15 @@ using Xamarin.Forms;
 
 namespace GUI.ViewModels
 {
+	/// <summary>
+	/// Obsługa karty potwoerdzenia adresu email.
+	/// </summary>
     class ConfirmEmailViewModel : BaseViewModel
     {
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="code">Kod wysłany na email uzytkownika.</param>
 		public ConfirmEmailViewModel(string code)
 		{
 			GeneratedCode = code;
@@ -18,6 +25,9 @@ namespace GUI.ViewModels
 
 		private string code;
 
+		/// <summary>
+		/// Kod wprowadzany przez użytkownika.
+		/// </summary>
 		public string Code
 		{
 			get { return code; }
@@ -27,6 +37,7 @@ namespace GUI.ViewModels
 				OnPropertyChanged();
 			}
 		}
+
 
 		public ICommand ConfirmEmailCommand => new Command(
 			async () =>
@@ -39,11 +50,14 @@ namespace GUI.ViewModels
 					await Application.Current.MainPage.DisplayAlert("Gotowe!", "Twoje konto zostało utwożone! Masz teraz dostęp do wszystkich funkcji :>",
 							"Ok");
 
-					await DBConnection.CreateUserInDBAsync();
+					var email = ((App)Application.Current).MainUser.EmailAddress;
+					int userId = await DBConnection.CreateUserInDBAsync(email, password);
 
 					LoginAccounPageChanges.ShowAccountPageInMenuSetup();
 
-					await DBConnection.GetUserDataAsync(int.Parse(((App)Application.Current).MainUser.Id));
+					((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(userId);
+
+					((App)Application.Current).MainUser.Id = userId.ToString();
 
 					LoginAccounPageChanges.GoToAccountPage();
 				}

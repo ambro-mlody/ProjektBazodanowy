@@ -85,7 +85,8 @@ namespace GUI.ViewModels
         public ICommand ShowChartCommand => new Command(
             async () =>
             {
-                var viewModel = new ChartViewModel(ref ((App)Application.Current).MainUser);
+                
+                var viewModel = new ChartViewModel();
                 var chartPage = new ChartPage { BindingContext = viewModel };
                 chartPage.Title = "Koszyk";
                 var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;

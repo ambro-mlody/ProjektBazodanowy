@@ -10,11 +10,22 @@ using Xamarin.Forms;
 
 namespace GUI.Models
 {
+	/// <summary>
+	/// Klasa odpowiedzialna za łączenie się z bazą danych.
+	/// </summary>
     public static class DBConnection
     {
+		/// <summary>
+		/// Dane serwera, bazy oraz konta.
+		/// </summary>
         public static string ConnectionString { get; set; } = @"Data Source=192.168.8.101\MSSQLSERVEWELL;Initial Catalog=pizzeriaDB;User ID=PizzeriaLogin;Password=Pizzeria";
 
-		public static async Task<int> GetUserIdFromEmailAsync()
+		/// <summary>
+		/// Asynchroniczna metoda zwracająca Id użytkownika na podstawie emailu.
+		/// </summary>
+		/// <param name="email">Email który chcemy znależć w bazie.</param>
+		/// <returns>Jeżeli taki adres email znajduje się w bazie: Id użytkownika. W przeciwnym wypadku: -1.</returns>
+		public static async Task<int> GetUserIdFromEmailAsync(string email)
 		{
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
 			{
@@ -24,7 +35,7 @@ namespace GUI.Models
 
 				searchEmail.CommandType = CommandType.StoredProcedure;
 
-				searchEmail.Parameters.Add(new SqlParameter("@email", ((App)Application.Current).MainUser.EmailAddress));
+				searchEmail.Parameters.Add(new SqlParameter("@email", email));
 
 				using (SqlDataReader userEmail = await searchEmail.ExecuteReaderAsync())
 				{
@@ -41,7 +52,13 @@ namespace GUI.Models
 			}
 		}
 
-		public static async Task CreateUserInDBAsync()
+		/// <summary>
+		/// Asynchroniczna metoda tworząca nowego użytkownika w bazie danych.
+		/// </summary>
+		/// <param name="email">Adres email podany przez użytkownika.</param>
+		/// <param name="password">Hasło(hash) użytkownika.</param>
+		/// <returns>Id nowo utowrzonego rekordu w bazie.</returns>
+		public static async Task<int> CreateUserInDBAsync(string email, string password)
 		{
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
 			{
@@ -51,14 +68,24 @@ namespace GUI.Models
 
 				createUser.CommandType = CommandType.StoredProcedure;
 
-				createUser.Parameters.Add(new SqlParameter("@email", ((App)Application.Current).MainUser.EmailAddress));
-				createUser.Parameters.Add(new SqlParameter("@password", ((App)Application.Current).MainUser.Password));
+				createUser.Parameters.Add(new SqlParameter("@email", email));
+				createUser.Parameters.Add(new SqlParameter("@password", password));
 
-				await createUser.ExecuteNonQueryAsync();
+				using (SqlDataReader userId = await createUser.ExecuteReaderAsync())
+				{
+					userId.Read();
+
+					return int.Parse(userId.GetValue(0).ToString());
+				}
 			}
 		}
 
-		public static async Task GetUserDataAsync(int userId)
+		/// <summary>
+		/// Asynchroniczna metoda zwracająca nowy obiekt User zawierający wsszystkie znajudujące się w bazie dane użytkownika o podanym Id.
+		/// </summary>
+		/// <param name="userId">Id użytkownika.</param>
+		/// <returns>Nowy obiekt klasy User.</returns>
+		public static async Task<User> GetUserDataAsync(int userId)
 		{
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
 			{
@@ -96,11 +123,16 @@ namespace GUI.Models
 
 					user.Address = Address;
 
-					((App)Application.Current).MainUser = user;
+					return user;
 				}
 			}
 		}
 
+		/// <summary>
+		/// Asynchroniczna metoda zwracająca adres o podanym Id.
+		/// </summary>
+		/// <param name="addressId">Id adresu w bazie.</param>
+		/// <returns>Nowy obiekt typu Address.</returns>
 		public static async Task<Address> GetUserAddressAsync(int addressId)
 		{
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
@@ -128,7 +160,12 @@ namespace GUI.Models
 			}
 		}
 
-		public static async Task StoreFacebookUserAsync(FBProfile profile)
+		/// <summary>
+		/// Asynchroniczna metoda dodająca do bazy użytkownika na podstawie danych z facebooka.
+		/// </summary>
+		/// <param name="profile">Profil użytkownika.</param>
+		/// <returns>Id dodanego rekordu</returns>
+		public static async Task<int> StoreFacebookUserAsync(FBProfile profile)
 		{
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
 			{
@@ -142,14 +179,21 @@ namespace GUI.Models
 				storeFbUser.Parameters.Add(new SqlParameter("@firstName", profile.first_name));
 				storeFbUser.Parameters.Add(new SqlParameter("@lastName", profile.last_name));
 
-				((App)Application.Current).MainUser.EmailAddress = profile.email;
-				((App)Application.Current).MainUser.FirstName = profile.first_name;
-				((App)Application.Current).MainUser.LastName = profile.last_name;
+				using (SqlDataReader userId = await storeFbUser.ExecuteReaderAsync())
+				{
+					userId.Read();
 
-				await storeFbUser.ExecuteNonQueryAsync();
+					return int.Parse(userId.GetString(0));
+				}
+
 			}
 		}
 
+		/// <summary>
+		/// Asynchroniczna metoda pobierająca hsło użytkownika o danym Id.
+		/// </summary>
+		/// <param name="userId">Id użytkownika.</param>
+		/// <returns>Hasło użytkownika.</returns>
 		public static async Task<string> GetUserPasswordAsync(int userId)
 		{
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
@@ -170,7 +214,13 @@ namespace GUI.Models
 			}
 		}
 
-		public static async Task ChangeUserPasswordAsync(string password)
+		/// <summary>
+		/// Asynchroniczna metoda zmieniająca hasło użytkownika o podanym id.
+		/// </summary>
+		/// <param name="userId">Id użytkownika.</param>
+		/// <param name="password">nowe hasło.</param>
+		/// <returns></returns>
+		public static async Task ChangeUserPasswordAsync(int userId, string password)
 		{
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
 			{
@@ -180,14 +230,19 @@ namespace GUI.Models
 
 				changePassword.CommandType = CommandType.StoredProcedure;
 
-				changePassword.Parameters.Add(new SqlParameter("@id", int.Parse(((App)Application.Current).MainUser.Id)));
+				changePassword.Parameters.Add(new SqlParameter("@id", userId));
 				changePassword.Parameters.Add(new SqlParameter("@password", password));
 
 				await changePassword.ExecuteNonQueryAsync();
 			}
 		}
 
-		public static async Task UpdateUserInDBAsync()
+		/// <summary>
+		/// Asynchroniczna metoda zmieniająca dane użytkownika w bazie.
+		/// </summary>
+		/// <param name="user">Nowe dane.</param>
+		/// <returns></returns>
+		public static async Task UpdateUserInDBAsync(User user)
 		{
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
 			{
@@ -197,33 +252,39 @@ namespace GUI.Models
 
 				storeUser.CommandType = CommandType.StoredProcedure;
 
-				storeUser.Parameters.Add(new SqlParameter("@id", int.Parse(((App)Application.Current).MainUser.Id)));
-				storeUser.Parameters.Add(new SqlParameter("@email", ((App)Application.Current).MainUser.EmailAddress));
-				storeUser.Parameters.Add(new SqlParameter("@firstName", ((App)Application.Current).MainUser.FirstName));
-				storeUser.Parameters.Add(new SqlParameter("@lastName", ((App)Application.Current).MainUser.LastName));
-				storeUser.Parameters.Add(new SqlParameter("@phoneNumber", ((App)Application.Current).MainUser.PhoneNumber));
+				storeUser.Parameters.Add(new SqlParameter("@id", int.Parse(user.Id)));
+				storeUser.Parameters.Add(new SqlParameter("@email", user.EmailAddress));
+				storeUser.Parameters.Add(new SqlParameter("@firstName", user.FirstName));
+				storeUser.Parameters.Add(new SqlParameter("@lastName", user.LastName));
+				storeUser.Parameters.Add(new SqlParameter("@phoneNumber", user.PhoneNumber));
 
 				if (((App)Application.Current).MainUser.Address.Id != "")
 				{
-					storeUser.Parameters.Add(new SqlParameter("@addressId", int.Parse(((App)Application.Current).MainUser.Address.Id)));
+					storeUser.Parameters.Add(new SqlParameter("@addressId", int.Parse(user.Address.Id)));
 				}
 				else
 				{
-					int id = await CreateAddressDataAsyc();
+					int id = await CreateAddressDataAsync(user.Address);
+					((App)Application.Current).MainUser.Id = id.ToString();
 					storeUser.Parameters.Add(new SqlParameter("@addressId", id));
 				}
 
-				storeUser.Parameters.Add(new SqlParameter("@city", ((App)Application.Current).MainUser.Address.City));
-				storeUser.Parameters.Add(new SqlParameter("@street", ((App)Application.Current).MainUser.Address.Street));
-				storeUser.Parameters.Add(new SqlParameter("@houseNumber", ((App)Application.Current).MainUser.Address.HouseNumber));
-				storeUser.Parameters.Add(new SqlParameter("@localNumber", ((App)Application.Current).MainUser.Address.LocalNumber));
-				storeUser.Parameters.Add(new SqlParameter("@postCode", ((App)Application.Current).MainUser.Address.PostCode));
+				storeUser.Parameters.Add(new SqlParameter("@city", user.Address.City));
+				storeUser.Parameters.Add(new SqlParameter("@street", user.Address.Street));
+				storeUser.Parameters.Add(new SqlParameter("@houseNumber", user.Address.HouseNumber));
+				storeUser.Parameters.Add(new SqlParameter("@localNumber", user.Address.LocalNumber));
+				storeUser.Parameters.Add(new SqlParameter("@postCode", user.Address.PostCode));
 
 				await storeUser.ExecuteNonQueryAsync();
 			}
 		}
 
-		public static async Task<int> CreateAddressDataAsyc()
+		/// <summary>
+		/// Asynchroniczna metoda tworząca nowy rekord adresu w bazie.
+		/// </summary>
+		/// <param name="address">Dane adresowe.</param>
+		/// <returns>Id nowo utworzonego rekordu.</returns>
+		public static async Task<int> CreateAddressDataAsync(Address address)
 		{
 
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
@@ -234,23 +295,27 @@ namespace GUI.Models
 
 				createAddress.CommandType = CommandType.StoredProcedure;
 
-				createAddress.Parameters.Add(new SqlParameter("@city", ((App)Application.Current).MainUser.Address.City));
-				createAddress.Parameters.Add(new SqlParameter("@street", ((App)Application.Current).MainUser.Address.Street));
-				createAddress.Parameters.Add(new SqlParameter("@houseNumber", ((App)Application.Current).MainUser.Address.HouseNumber));
-				createAddress.Parameters.Add(new SqlParameter("@localNumber", ((App)Application.Current).MainUser.Address.LocalNumber));
-				createAddress.Parameters.Add(new SqlParameter("@postCode", ((App)Application.Current).MainUser.Address.PostCode));
+				createAddress.Parameters.Add(new SqlParameter("@city", address.City));
+				createAddress.Parameters.Add(new SqlParameter("@street", address.Street));
+				createAddress.Parameters.Add(new SqlParameter("@houseNumber", address.HouseNumber));
+				createAddress.Parameters.Add(new SqlParameter("@localNumber", address.LocalNumber));
+				createAddress.Parameters.Add(new SqlParameter("@postCode", address.PostCode));
 
 				using (SqlDataReader insertedAddressId = await createAddress.ExecuteReaderAsync())
 				{
 					insertedAddressId.Read();
 					var id = insertedAddressId.GetValue(0).ToString();
-					((App)Application.Current).MainUser.Address.Id = id;
 					return int.Parse(id);
 				}
 			}
 		}
 
-		public static async Task DeleteUserFromDBAsync()
+		/// <summary>
+		/// Asynchroniczna metoda usuwająca użytkownika o podanym Id z bazy danych.
+		/// </summary>
+		/// <param name="userId">Id użytkownika do usunięcia</param>
+		/// <returns></returns>
+		public static async Task DeleteUserFromDBAsync(int userId)
 		{
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
 			{
@@ -260,13 +325,16 @@ namespace GUI.Models
 
 				storeUser.CommandType = CommandType.StoredProcedure;
 
-				storeUser.Parameters.Add(new SqlParameter("@id", int.Parse(((App)Application.Current).MainUser.Id)));
-				storeUser.Parameters.Add(new SqlParameter("@addressId", int.Parse(((App)Application.Current).MainUser.Address.Id)));
+				storeUser.Parameters.Add(new SqlParameter("@id", userId));
 
 				await storeUser.ExecuteNonQueryAsync();
 			}
 		}
 
+		/// <summary>
+		/// Asynchroniczna metoda pobierająca daneo pizzach z bazy danych.
+		/// </summary>
+		/// <returns>Nowa kolekcja obiektów typu PizzaItem zawierająca wszystkie pizze znajdujące się w bazie.</returns>
 		public static async Task<ObservableCollection<PizzaItem>> GetPizzasFromDBAsync()
 		{
 			var pizzas = new ObservableCollection<PizzaItem>();
@@ -306,6 +374,11 @@ namespace GUI.Models
 
 		}
 
+		/// <summary>
+		/// Asynchroniczna funkcja zwracająca obraz pizzy.
+		/// </summary>
+		/// <param name="imageId">id obrazu(nie pizzy!) w bazie.</param>
+		/// <returns>Obiekt typu ImageSource zawierający obraz.</returns>
 		public static async Task<ImageSource> GetImageAsync(int imageId)
 		{
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))
@@ -324,6 +397,11 @@ namespace GUI.Models
 			}
 		}	
 
+		/// <summary>
+		/// Asynchroniczna metoda zwracająca wszystkie składniki przypisane do pizzy o podanym Id.
+		/// </summary>
+		/// <param name="pizzaId">Id pizzy.</param>
+		/// <returns>Lista składników (string).</returns>
 		public static async Task<List<string>> GetIngredientsInPizzaAsync(int pizzaId)
 		{
 			var ingredients = new List<string>();
@@ -350,6 +428,11 @@ namespace GUI.Models
 			return ingredients;
 		}
 
+		/// <summary>
+		/// Asynchroniczna metoda zapisująca informacje o zamówieniu w bazie danych.
+		/// </summary>
+		/// <param name="user">Informacje o zamówieniu w postaci obiektu klasy User.</param>
+		/// <returns></returns>
 		public static async Task StoreOrderInfoAsync(User user)
 		{
 			int orderId;
@@ -379,6 +462,12 @@ namespace GUI.Models
 			await StorePizzasInOrderAsync(user.UserChart.Pizzas, orderId);
 		}
 
+		/// <summary>
+		/// Asynchroniczna metoda zapisujaca w bazie informacje o wszystkich pizzach znajdujących się w zamówieniu.
+		/// </summary>
+		/// <param name="pizzas">Kolekcja pizz w zamówieniu.</param>
+		/// <param name="orderId">Id zamówienia.</param>
+		/// <returns></returns>
 		public static async Task StorePizzasInOrderAsync(ObservableCollection<PizzaInChart> pizzas, int orderId)
 		{
 			using (SqlConnection conn = new SqlConnection(DBConnection.ConnectionString))

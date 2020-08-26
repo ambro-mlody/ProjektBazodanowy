@@ -24,7 +24,7 @@ namespace GUI.Views
         {
             if(((App)Application.Current).MainUser.Loged)
             {
-                await DBConnection.UpdateUserInDBAsync();
+                await DBConnection.UpdateUserInDBAsync(((App)Application.Current).MainUser);
             }
 
             base.OnDisappearing();

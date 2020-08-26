@@ -10,8 +10,14 @@ using Xamarin.Forms;
 
 namespace GUI.ViewModels
 {
+	/// <summary>
+	/// Klasa obsługująca kartę zmiany hasła.
+	/// </summary>
     class ChangePasswordViewModel : BaseViewModel
     {
+		/// <summary>
+		/// Ustawienie pól na puste.
+		/// </summary>
 		public ChangePasswordViewModel()
 		{
 			newPassword = "";
@@ -20,6 +26,9 @@ namespace GUI.ViewModels
 
 		private string newPassword;
 
+		/// <summary>
+		/// Nowe hasło wprowadzone przez użytkownika.
+		/// </summary>
 		public string NewPassword
 		{
 			get { return newPassword; }
@@ -32,6 +41,9 @@ namespace GUI.ViewModels
 
 		private string confirmPassword;
 
+		/// <summary>
+		/// Powtórzenie hasła.
+		/// </summary>
 		public string ConfirmPassword
 		{
 			get { return confirmPassword; }
@@ -42,6 +54,9 @@ namespace GUI.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Obsługa zmiany hasła (pola NewPassword oraz ConfirmPassword nie mogą być puste, oraz muszą być takie same).
+		/// </summary>
 		public ICommand ChangePasswordCommand => new Command(
 			async () =>
 			{ 
@@ -49,7 +64,8 @@ namespace GUI.ViewModels
 				{
 					string password = Hashing.HashPassword(NewPassword);
 					((App)Application.Current).MainUser.Password = password;
-					await DBConnection.ChangeUserPasswordAsync(password);
+					var id = int.Parse(((App)Application.Current).MainUser.Id);
+					await DBConnection.ChangeUserPasswordAsync(id,password);
 
 					await Application.Current.MainPage.DisplayAlert("Gotowe!", "Hasło zostało amienione.!",
 						"Ok");

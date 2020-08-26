@@ -12,10 +12,14 @@
 
   <ItemGroup>
     <None Remove="Fonts\Lobster-Regular.ttf" />
+    <None Remove="Fonts\PermanentMarker-Regular.ttf" />
+    <None Remove="Fonts\Roboto-MediumItalic.ttf" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Fonts\Lobster-Regular.ttf" />
+    <EmbeddedResource Include="Fonts\PermanentMarker-Regular.ttf" />
+    <EmbeddedResource Include="Fonts\Roboto-MediumItalic.ttf" />
   </ItemGroup>
 
   <ItemGroup>

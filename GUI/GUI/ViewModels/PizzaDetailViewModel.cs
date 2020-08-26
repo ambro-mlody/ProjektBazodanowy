@@ -197,7 +197,7 @@ namespace GUI.ViewModels
                 {
                     var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
                     await navigation.PopAsync();
-                    var viewModel = new ChartViewModel(ref ((App)Application.Current).MainUser);
+                    var viewModel = new ChartViewModel();
                     var chartPage = new ChartPage { BindingContext = viewModel };
                     chartPage.Title = "Koszyk";
 

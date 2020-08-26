@@ -7,9 +7,14 @@ using Xamarin.Forms;
 
 namespace GUI.ViewModels
 {
+	/// <summary>
+	/// ViewModel obsługujący kartę konta użytkownika.
+	/// </summary>
     class AccountViewModel : BaseViewModel
     {
-
+		/// <summary>
+		/// Konstruktor pobirający dane z MainUser.
+		/// </summary>
 		public AccountViewModel()
 		{
 			Email = ((App)Application.Current).MainUser.EmailAddress;
@@ -25,6 +30,9 @@ namespace GUI.ViewModels
 
 		private string email;
 
+		/// <summary>
+		/// Email użytkownika.
+		/// </summary>
 		public string Email
 		{
 			get { return email; }
@@ -38,6 +46,9 @@ namespace GUI.ViewModels
 
 		private string firstName;
 
+		/// <summary>
+		/// Imię.
+		/// </summary>
 		public string FirstName
 		{
 			get { return firstName; }
@@ -51,6 +62,9 @@ namespace GUI.ViewModels
 
 		private string lastName;
 
+		/// <summary>
+		/// Nazwisko.
+		/// </summary>
 		public string LastName
 		{
 			get { return lastName; }
@@ -64,6 +78,9 @@ namespace GUI.ViewModels
 
 		private string phoneNumber;
 
+		/// <summary>
+		/// Numer telefonu.
+		/// </summary>
 		public string PhoneNumber
 		{
 			get { return phoneNumber; }
@@ -77,6 +94,9 @@ namespace GUI.ViewModels
 
 		private string city;
 
+		/// <summary>
+		/// Miasto.
+		/// </summary>
 		public string City
 		{
 			get { return city; }
@@ -90,6 +110,9 @@ namespace GUI.ViewModels
 
 		private string postCode;
 
+		/// <summary>
+		/// Kod pocztowy.
+		/// </summary>
 		public string PostCode
 		{
 			get { return postCode; }
@@ -103,6 +126,9 @@ namespace GUI.ViewModels
 
 		private string street;
 
+		/// <summary>
+		/// Ulica.
+		/// </summary>
 		public string Street
 		{
 			get { return street; }
@@ -116,6 +142,9 @@ namespace GUI.ViewModels
 
 		private string houseNumber;
 
+		/// <summary>
+		/// Nume domu.
+		/// </summary>
 		public string HouseNumber
 		{
 			get { return houseNumber; }
@@ -129,6 +158,9 @@ namespace GUI.ViewModels
 
 		private string localNumber;
 
+		/// <summary>
+		/// Numer mieszkania.
+		/// </summary>
 		public string LocalNumber
 		{
 			get { return localNumber; }
@@ -140,6 +172,9 @@ namespace GUI.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Obsługa przycisku zmiany hasła (otwarcie karty zmiany hasła).
+		/// </summary>
 		public ICommand ChangePasswordCommand => new Command(
 			async () =>
 			{
@@ -151,6 +186,9 @@ namespace GUI.ViewModels
 				await navigation.PushAsync(detailsPage, true);
 			});
 
+		/// <summary>
+		/// Obsługa przycisku usuwania konta użytkownika (wyświetlenie ostrzeżenia, a następnie usuniecie użytkownika z bazy).
+		/// </summary>
 		public ICommand DeleteAccountCommand => new Command(
 			async () =>
 			{
@@ -159,7 +197,8 @@ namespace GUI.ViewModels
 
 				if (res)
 				{
-					await DBConnection.DeleteUserFromDBAsync();
+					var id = int.Parse(((App)Application.Current).MainUser.Id);
+					await DBConnection.DeleteUserFromDBAsync(id);
 
 					LoginAccounPageChanges.setUpLogInPage();
 
@@ -168,6 +207,9 @@ namespace GUI.ViewModels
 				
 			});
 
+		/// <summary>
+		/// Obsługa wylogowania użytkownika.
+		/// </summary>
 		public ICommand LogOutCommand => new Command(
 			async () =>
 			{
@@ -176,7 +218,7 @@ namespace GUI.ViewModels
 
 				if(res)
 				{
-					await DBConnection.UpdateUserInDBAsync();
+					await DBConnection.UpdateUserInDBAsync(((App)Application.Current).MainUser);
 
 					LoginAccounPageChanges.setUpLogInPage();
 

@@ -8,10 +8,16 @@ using System.Collections.ObjectModel;
 
 namespace GUI.ViewModels
 {
+	/// <summary>
+	/// Obsługa koszyka.
+	/// </summary>
 	class ChartViewModel : BaseViewModel
 	{
 		private ObservableCollection<PizzaInChart> pizzas;
 
+		/// <summary>
+		/// Kolekcja pizz dodanych do koszyka.
+		/// </summary>
 		public ObservableCollection<PizzaInChart> Pizzas
 		{
 			get { return pizzas; }
@@ -24,6 +30,9 @@ namespace GUI.ViewModels
 
 		private double price;
 
+		/// <summary>
+		/// Cena za cały koszyk.
+		/// </summary>
 		public double Price
 		{
 			get { return price; }
@@ -34,10 +43,33 @@ namespace GUI.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Dane użytkownika (zamówienia).
+		/// </summary>
 		public User user { get; set; }
 
-		public ChartViewModel(ref User user)
+		/// <summary>
+		/// Przypisanie wartości znajdujących sie w MainUser.
+		/// </summary>
+		public ChartViewModel()
 		{
+			user = new User
+			{
+				UserChart = ((App)Application.Current).MainUser.UserChart,
+				EmailAddress = ((App)Application.Current).MainUser.EmailAddress,
+				FirstName = ((App)Application.Current).MainUser.FirstName,
+				LastName = ((App)Application.Current).MainUser.LastName,
+				PhoneNumber = ((App)Application.Current).MainUser.PhoneNumber,
+				Address = new Address
+				{
+					City = ((App)Application.Current).MainUser.Address.City,
+					PostCode = ((App)Application.Current).MainUser.Address.PostCode,
+					Street = ((App)Application.Current).MainUser.Address.Street,
+					HouseNumber = ((App)Application.Current).MainUser.Address.HouseNumber,
+					LocalNumber = ((App)Application.Current).MainUser.Address.LocalNumber
+				}	
+			};
+
 			Price = 0;
 			Pizzas = user.UserChart.Pizzas;
 			foreach (var item in Pizzas)
@@ -45,9 +77,12 @@ namespace GUI.ViewModels
 				Price += item.TotalCost;
 			}
 
-			this.user = user;
+			
 		}
 
+		/// <summary>
+		/// Obsługa przycisku zmniejszania ilości danego typu pizzy w koszyku.
+		/// </summary>
 		public ICommand MinusAmmountCommand => new Command<PizzaInChart>(
 			async (PizzaInChart pizza) =>
 			{
@@ -82,6 +117,9 @@ namespace GUI.ViewModels
 				}	
 			});
 
+		/// <summary>
+		/// Obsługa przycisku zwiększania ilości danego typu pizzy w koszyku.
+		/// </summary>
 		public ICommand PlusAmmountCommand => new Command<PizzaInChart>(
 			(PizzaInChart pizza) =>
 			{
@@ -92,6 +130,9 @@ namespace GUI.ViewModels
 				Price += pizza.CostOfOne;
 			});
 
+		/// <summary>
+		/// Obsługa przycisku potwierdzenia zamówienia (pobranie poprawności wypełnionych pól).
+		/// </summary>
 		public ICommand OrderCommand => new Command<bool>(
 			async (bool canExecute) =>
 			{
@@ -101,17 +142,13 @@ namespace GUI.ViewModels
 				}
 				else if(canExecute)
 				{
-
+					
 					await DBConnection.StoreOrderInfoAsync(user);
 
 					Pizzas.Clear();
 					if(!user.Loged)
 					{
-						user.FirstName = "";
-						user.Address = new Address();
-						user.EmailAddress = "";
-						user.LastName = "";
-						user.PhoneNumber = "";
+						user = new User();
 					}
 
 					await Application.Current.MainPage.DisplayAlert("", "Zamówienie przyjęte do realizacji", "OK");

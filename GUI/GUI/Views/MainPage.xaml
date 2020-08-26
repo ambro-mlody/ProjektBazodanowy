@@ -26,14 +26,16 @@
 
             <Grid Padding="0" HorizontalOptions="FillAndExpand" 
                   VerticalOptions="FillAndExpand" BackgroundColor="White">
+
                 <StackLayout Spacing="0" VerticalOptions="Center" 
                              HorizontalOptions="Center" >
+                    <Label Text="Pizzeria" FontSize="18" Margin="0,0,0,0" 
+                           TextColor="Red" Opacity=".8"
+                           HorizontalOptions="Center" FontFamily="Roboto"/>
                     <Label Text="D'ITALIA" TextColor="Green" 
                            HorizontalOptions="Center" 
-                           FontSize="36"/>
-                    <Label Text="Pizzeria" FontSize="18" Margin="0,-10,0,0" 
-                           TextColor="Red" Opacity=".5"
-                           HorizontalOptions="Center"/>
+                           FontSize="36" FontFamily="Marker" Margin="0,-10,0,0"/>
+                    
 
                 </StackLayout>
             </Grid>

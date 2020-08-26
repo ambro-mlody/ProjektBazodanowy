@@ -6,12 +6,15 @@ using Xamarin.Forms;
 
 namespace GUI.Behaviors
 {
+    /// <summary>
+    /// Klasa sprawdzająca poprawność numeru telefonu.
+    /// </summary>
     class PhoneNumberBehavior : BaseValidation
     {
         protected override void OnEntryTextChanged(object sender, TextChangedEventArgs args)
         {
             var textValue = args.NewTextValue;
-            IsValid = Regex.IsMatch(textValue, @"^[0-9]{9}$");
+            IsValid = Regex.IsMatch(textValue, @"^[0-9]$");
         }
     }
 }

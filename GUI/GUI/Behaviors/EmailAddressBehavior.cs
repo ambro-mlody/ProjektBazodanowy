@@ -7,6 +7,9 @@ using Xamarin.Forms;
 
 namespace GUI.Behaviors
 {
+    /// <summary>
+    /// Klasa odpowiadająca za walidację adresu Email wprowadzanego przez użytkownika.
+    /// </summary>
     public class EmailAddressBehavior : BaseValidation
     {
         protected override void OnEntryTextChanged(object sender, TextChangedEventArgs args)

@@ -5,9 +5,12 @@ using Xamarin.Forms;
 
 namespace GUI.Behaviors
 {
-    public class BaseValidation : Behavior<Entry>
-    {
 
+    /// <summary>
+    /// Bazowa klasa sprawdzania poprawności danych wprowadzanych przez użytkownika, dziedziczą po niej bardziej skonkretyzowane klasy.
+    /// </summary>
+    public abstract class BaseValidation : Behavior<Entry>
+    {
         static readonly BindablePropertyKey IsValidPropertyKey = BindableProperty.CreateReadOnly("IsValid", typeof(bool), typeof(NotEmptyBehavior), false);
 
         public static readonly BindableProperty IsValidProperty = IsValidPropertyKey.BindableProperty;

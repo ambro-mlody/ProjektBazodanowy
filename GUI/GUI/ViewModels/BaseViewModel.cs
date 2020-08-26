@@ -6,6 +6,9 @@ using System.Text;
 
 namespace GUI.ViewModels
 {
+    /// <summary>
+    /// Bazowa klasa zawierająca obsługę zdarzenia OnPropertyChanged.
+    /// </summary>
     class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

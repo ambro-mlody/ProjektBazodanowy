@@ -6,6 +6,9 @@ using Xamarin.Forms;
 
 namespace GUI.Behaviors
 {
+    /// <summary>
+    /// Klasa sprawdzająca, by pole wprowadzone przez użytkownika nie było puste.
+    /// </summary>
     public class NotEmptyBehavior : BaseValidation
     {
         override protected void OnEntryTextChanged(object sender, TextChangedEventArgs args)
