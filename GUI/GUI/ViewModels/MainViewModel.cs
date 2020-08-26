@@ -49,6 +49,10 @@ namespace GUI.ViewModels
             PizzaItems = await DBConnection.GetPizzasFromDBAsync();
         }
 
+        /// <summary>
+        /// Testowe pizze.
+        /// </summary>
+        /// <returns></returns>
         private ObservableCollection<PizzaItem> makeSomeTestPizzas()
         {
             return new ObservableCollection<PizzaItem>

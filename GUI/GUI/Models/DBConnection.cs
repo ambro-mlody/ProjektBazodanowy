@@ -183,7 +183,7 @@ namespace GUI.Models
 				{
 					userId.Read();
 
-					return int.Parse(userId.GetString(0));
+					return int.Parse(userId.GetValue(0).ToString());
 				}
 
 			}

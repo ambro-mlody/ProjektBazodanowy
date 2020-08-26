@@ -31,7 +31,7 @@
                                 </Grid>
                             </StackLayout>
 
-                            <Entry Text="{Binding Email}" Placeholder="Kod" TextColor="Black" FontSize="12"
+                            <Entry Text="{Binding Email}" Placeholder="Email" TextColor="Black" FontSize="12"
                                        ClearButtonVisibility="WhileEditing"/>
 
                             <StackLayout>
@@ -47,7 +47,7 @@
                                 </Grid>
                             </StackLayout>
 
-                            <Entry Text="{Binding Password}" Placeholder="Nowe Hasło" TextColor="Black" FontSize="12"
+                            <Entry Text="{Binding Password}" Placeholder="Hasło" TextColor="Black" FontSize="12"
                                        ClearButtonVisibility="WhileEditing" IsPassword="True"/>
 
                             <Entry Text="{Binding ConfirmPassword}" Placeholder="Powtórz Hasło" TextColor="Black" FontSize="12"

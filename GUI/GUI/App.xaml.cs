@@ -10,6 +10,7 @@ namespace GUI
     {
         public User MainUser;
 
+
         public App()
         {
             InitializeComponent();

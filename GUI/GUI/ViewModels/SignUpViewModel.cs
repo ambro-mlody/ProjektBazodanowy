@@ -68,7 +68,7 @@ namespace GUI.ViewModels
 
 							((App)Application.Current).MainUser.EmailAddress = Email;
 
-							int userId = await DBConnection.GetUserIdFromEmailAsync();
+							int userId = await DBConnection.GetUserIdFromEmailAsync(Email);
 
 							if(userId == -1)
 							{

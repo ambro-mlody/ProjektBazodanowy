@@ -38,7 +38,9 @@ namespace GUI.ViewModels
 			}
 		}
 
-
+		/// <summary>
+		/// Obsługa przycisku potwierdzenia emaila.
+		/// </summary>
 		public ICommand ConfirmEmailCommand => new Command(
 			async () =>
 			{

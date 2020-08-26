@@ -142,7 +142,7 @@ namespace GUI.ViewModels
 				}
 				else if(canExecute)
 				{
-					
+					user.UserChart.Price = Price;
 					await DBConnection.StoreOrderInfoAsync(user);
 
 					Pizzas.Clear();

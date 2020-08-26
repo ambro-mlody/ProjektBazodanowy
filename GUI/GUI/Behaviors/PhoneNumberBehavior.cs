@@ -14,7 +14,7 @@ namespace GUI.Behaviors
         protected override void OnEntryTextChanged(object sender, TextChangedEventArgs args)
         {
             var textValue = args.NewTextValue;
-            IsValid = Regex.IsMatch(textValue, @"^[0-9]$");
+            IsValid = Regex.IsMatch(textValue, @"^[0-9]+$");
         }
     }
 }

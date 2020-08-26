@@ -67,15 +67,21 @@ namespace GUI.ViewModels
 					if (NewPassword == ConfirmPassword && NewPassword != "")
 					{
 						string password = Hashing.HashPassword(NewPassword);
+
+						var id = int.Parse(((App)Application.Current).MainUser.Id);
+
 						((App)Application.Current).MainUser.Password = password;
-						await DBConnection.ChangeUserPasswordAsync(password);
+
+						await DBConnection.ChangeUserPasswordAsync(id, password);
 
 						await Application.Current.MainPage.DisplayAlert("Gotowe!", "Hasło zostało zmienione!",
 							"Ok");
 
 						LoginAccounPageChanges.ShowAccountPageInMenuSetup();
 
-						await DBConnection.GetUserDataAsync(int.Parse(((App)Application.Current).MainUser.Id));
+						
+
+						((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(id);
 
 						LoginAccounPageChanges.GoToAccountPage();
 					}

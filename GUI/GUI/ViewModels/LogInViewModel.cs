@@ -50,6 +50,7 @@ namespace GUI.ViewModels
 		public ICommand logInFacebookCommand => new Command(
 			() =>
 			{
+				// aplikacja facebookowa.
 				var auth = new OAuth2Authenticator(
 					"3194277703942557",
 					"email",
@@ -81,19 +82,22 @@ namespace GUI.ViewModels
 
 				var profile = await getFacebookUserAsync(accessToken);
 
-				((App)Application.Current).MainUser.EmailAddress = profile.email;
-
-				int userId = await DBConnection.GetUserIdFromEmailAsync();
+				int userId = await DBConnection.GetUserIdFromEmailAsync(profile.email);
 
 				if (userId != -1)
 				{
-					await DBConnection.GetUserDataAsync(userId);
+					((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(userId);
 
 					LoginAccounPageChanges.GoToAccountPage();
 				}
 				else
 				{
-					await DBConnection.StoreFacebookUserAsync(profile);
+					userId = await DBConnection.StoreFacebookUserAsync(profile);
+
+					((App)Application.Current).MainUser.EmailAddress = profile.email;
+					((App)Application.Current).MainUser.FirstName = profile.first_name;
+					((App)Application.Current).MainUser.LastName = profile.last_name;
+					((App)Application.Current).MainUser.Id = userId.ToString();
 
 					LoginAccounPageChanges.GoToAccountPage();
 				}
@@ -129,7 +133,7 @@ namespace GUI.ViewModels
 							"Ok");
 					}
 
-					int userId = await DBConnection.GetUserIdFromEmailAsync();
+					int userId = await DBConnection.GetUserIdFromEmailAsync(email);
 
 					if(userId != -1)
 					{
@@ -139,7 +143,7 @@ namespace GUI.ViewModels
 						{
 							LoginAccounPageChanges.ShowAccountPageInMenuSetup();
 
-							await DBConnection.GetUserDataAsync(userId);
+							((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(userId);
 
 							LoginAccounPageChanges.GoToAccountPage();
 						}
@@ -191,7 +195,7 @@ namespace GUI.ViewModels
 
 							((App)Application.Current).MainUser.EmailAddress = email;
 
-							int userId = await DBConnection.GetUserIdFromEmailAsync();
+							int userId = await DBConnection.GetUserIdFromEmailAsync(email);
 
 							if(userId != -1)
 							{
