@@ -198,7 +198,16 @@ namespace GUI.ViewModels
 				if (res)
 				{
 					var id = int.Parse(((App)Application.Current).MainUser.Id);
-					await DBConnection.DeleteUserFromDBAsync(id);
+					try
+					{
+						await DBConnection.DeleteUserFromDBAsync(id);
+					}
+					catch (Exception)
+					{
+						await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+							"oraz że mam włączonego laptopa :>",
+						"Ok");
+					}
 
 					LoginAccounPageChanges.setUpLogInPage();
 
@@ -218,7 +227,16 @@ namespace GUI.ViewModels
 
 				if(res)
 				{
-					await DBConnection.UpdateUserInDBAsync(((App)Application.Current).MainUser);
+					try
+					{
+						await DBConnection.UpdateUserInDBAsync(((App)Application.Current).MainUser);
+					}
+					catch (Exception)
+					{
+						await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+							"oraz że mam włączonego laptopa :>",
+							"Ok");
+					}
 
 					LoginAccounPageChanges.setUpLogInPage();
 

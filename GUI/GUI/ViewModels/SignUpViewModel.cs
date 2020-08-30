@@ -66,39 +66,47 @@ namespace GUI.ViewModels
 						{
 							MailAddress mail = new MailAddress(email);
 
-							((App)Application.Current).MainUser.EmailAddress = Email;
-
-							int userId = await DBConnection.GetUserIdFromEmailAsync(Email);
-
-							if(userId == -1)
+							try
 							{
-								((App)Application.Current).MainUser.Password = Password;
+								int userId = await DBConnection.GetUserIdFromEmailAsync(Email);
 
-								var code = EmailSender.GenerateCode();
+								((App)Application.Current).MainUser.EmailAddress = Email;
 
-								EmailSender sender = new EmailSender(
-									mail,
-									"Rejestracja",
-									$"Twój kod do rejestracji: {code}");
+								if (userId == -1)
+								{
+									((App)Application.Current).MainUser.Password = Password;
 
-								await sender.SendMailAsync();
+									var code = EmailSender.GenerateCode();
 
-								await Application.Current.MainPage.DisplayAlert("Uwaga!", "Kod do rejestracji został wysłany na twojego emaila.",
+									EmailSender sender = new EmailSender(
+										mail,
+										"Rejestracja",
+										$"Twój kod do rejestracji: {code}");
+
+									await sender.SendMailAsync();
+
+									await Application.Current.MainPage.DisplayAlert("Uwaga!", "Kod do rejestracji został wysłany na twojego emaila.",
+									"Ok");
+
+									var viewModel = new ConfirmEmailViewModel(code);
+									var detailsPage = new ConfirmEmailPage { BindingContext = viewModel };
+									detailsPage.Title = "Potwierdz Email";
+
+									var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
+									await navigation.PushAsync(detailsPage, true);
+								}
+								else
+								{
+									await Application.Current.MainPage.DisplayAlert("Błąd!", "Ten Email jest już zajęty",
+									"Ok");
+								}
+							}
+							catch (Exception)
+							{
+								await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+								"oraz że mam włączonego laptopa :>",
 								"Ok");
-
-								var viewModel = new ConfirmEmailViewModel(code);
-								var detailsPage = new ConfirmEmailPage { BindingContext = viewModel };
-								detailsPage.Title = "Potwierdz Email";
-
-								var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
-								await navigation.PushAsync(detailsPage, true);
 							}
-							else
-							{
-								await Application.Current.MainPage.DisplayAlert("Błąd!", "Ten Email jest już zajęty",
-							"Ok");
-							}
-							
 						}
 						catch
 						{

@@ -65,10 +65,19 @@ namespace GUI.ViewModels
 					string password = Hashing.HashPassword(NewPassword);
 					((App)Application.Current).MainUser.Password = password;
 					var id = int.Parse(((App)Application.Current).MainUser.Id);
-					await DBConnection.ChangeUserPasswordAsync(id,password);
 
-					await Application.Current.MainPage.DisplayAlert("Gotowe!", "Hasło zostało amienione.!",
+					try
+					{
+						await DBConnection.ChangeUserPasswordAsync(id, password);
+						await Application.Current.MainPage.DisplayAlert("Gotowe!", "Hasło zostało amienione.!",
 						"Ok");
+					}
+					catch (Exception)
+					{
+						await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+							"oraz że mam włączonego laptopa :>",
+						"Ok");
+					}
 
 					var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
 					await navigation.PopAsync();

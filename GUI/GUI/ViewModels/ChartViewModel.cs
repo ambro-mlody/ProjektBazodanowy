@@ -143,17 +143,28 @@ namespace GUI.ViewModels
 				else if(canExecute)
 				{
 					user.UserChart.Price = Price;
-					await DBConnection.StoreOrderInfoAsync(user);
 
-					Pizzas.Clear();
-					if(!user.Loged)
+					try
 					{
-						user = new User();
-					}
+						await DBConnection.StoreOrderInfoAsync(user);
 
-					await Application.Current.MainPage.DisplayAlert("", "Zamówienie przyjęte do realizacji", "OK");
-					var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
-					await navigation.PopAsync();
+						Pizzas.Clear();
+						if (!user.Loged)
+						{
+							user = new User();
+						}
+
+						await Application.Current.MainPage.DisplayAlert("", "Zamówienie przyjęte do realizacji", "OK");
+						var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
+						await navigation.PopAsync();
+					}
+					catch (Exception)
+					{
+
+						await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+							"oraz że mam włączonego laptopa :>",
+						"Ok");
+					}
 				}
 				else
 				{

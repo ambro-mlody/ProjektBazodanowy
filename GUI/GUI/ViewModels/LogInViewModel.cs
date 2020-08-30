@@ -76,31 +76,63 @@ namespace GUI.ViewModels
 			if (e.IsAuthenticated)
 			{
 				var accessToken = e.Account.Properties["access_token"];
-				((App)Application.Current).MainUser.Loged = true;
-
-				LoginAccounPageChanges.ShowAccountPageInMenuSetup();
-
+				
 				var profile = await getFacebookUserAsync(accessToken);
 
-				int userId = await DBConnection.GetUserIdFromEmailAsync(profile.email);
-
-				if (userId != -1)
+				try
 				{
-					((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(userId);
+					int userId = await DBConnection.GetUserIdFromEmailAsync(profile.email);
 
-					LoginAccounPageChanges.GoToAccountPage();
+					((App)Application.Current).MainUser.Loged = true;
+
+					LoginAccounPageChanges.ShowAccountPageInMenuSetup();
+
+					if (userId != -1)
+					{
+
+						try
+						{
+							((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(userId);
+
+							LoginAccounPageChanges.GoToAccountPage();
+						}
+						catch (Exception)
+						{
+							await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+							"oraz że mam włączonego laptopa :>",
+							"Ok");
+						}
+
+					}
+					else
+					{
+						try
+						{
+							userId = await DBConnection.StoreFacebookUserAsync(profile);
+
+							((App)Application.Current).MainUser.EmailAddress = profile.email;
+							((App)Application.Current).MainUser.FirstName = profile.first_name;
+							((App)Application.Current).MainUser.LastName = profile.last_name;
+							((App)Application.Current).MainUser.Id = userId.ToString();
+
+							LoginAccounPageChanges.GoToAccountPage();
+						}
+						catch (Exception)
+						{
+							await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+							"oraz że mam włączonego laptopa :>",
+							"Ok");
+						}
+						
+					}
 				}
-				else
+				catch (Exception)
 				{
-					userId = await DBConnection.StoreFacebookUserAsync(profile);
-
-					((App)Application.Current).MainUser.EmailAddress = profile.email;
-					((App)Application.Current).MainUser.FirstName = profile.first_name;
-					((App)Application.Current).MainUser.LastName = profile.last_name;
-					((App)Application.Current).MainUser.Id = userId.ToString();
-
-					LoginAccounPageChanges.GoToAccountPage();
+					await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+							"oraz że mam włączonego laptopa :>",
+							"Ok");
 				}
+
 			}
 		}
 
@@ -133,31 +165,50 @@ namespace GUI.ViewModels
 							"Ok");
 					}
 
-					int userId = await DBConnection.GetUserIdFromEmailAsync(email);
-
-					if(userId != -1)
+					try
 					{
-						string userPassword = await DBConnection.GetUserPasswordAsync(userId);
+						int userId = await DBConnection.GetUserIdFromEmailAsync(email);
 
-						if (Hashing.ValidatePassword(password, userPassword))
+						if (userId != -1)
 						{
-							LoginAccounPageChanges.ShowAccountPageInMenuSetup();
+							string userPassword = await DBConnection.GetUserPasswordAsync(userId);
 
-							((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(userId);
+							if (Hashing.ValidatePassword(password, userPassword))
+							{
+								try
+								{
+									((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(userId);
 
-							LoginAccounPageChanges.GoToAccountPage();
+									LoginAccounPageChanges.ShowAccountPageInMenuSetup();
+
+									LoginAccounPageChanges.GoToAccountPage();
+								}
+								catch (Exception)
+								{
+									await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+									"oraz że mam włączonego laptopa :>",
+									"Ok");
+								}
+							}
+							else
+							{
+								await Application.Current.MainPage.DisplayAlert("Uwaga!", "Niepoprawne Hasło.", "Ok");
+								password = "";
+							}
 						}
 						else
 						{
-							await Application.Current.MainPage.DisplayAlert("Uwaga!", "Niepoprawne Hasło.", "Ok");
-							password = "";
+							await Application.Current.MainPage.DisplayAlert("Błąd!", "Podany email nie jest powiązany z żadnym kontem!",
+																					"Ok");
 						}
 					}
-					else
+					catch (Exception)
 					{
-						await Application.Current.MainPage.DisplayAlert("Błąd!", "Podany email nie jest powiązany z żadnym kontem!",
-																				"Ok");
+						await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+							"oraz że mam włączonego laptopa :>",
+							"Ok");
 					}
+					
 				}
 				else
 				{
@@ -193,39 +244,48 @@ namespace GUI.ViewModels
 						{
 							MailAddress mail = new MailAddress(email);
 
-							((App)Application.Current).MainUser.EmailAddress = email;
-
-							int userId = await DBConnection.GetUserIdFromEmailAsync(email);
-
-							if(userId != -1)
+							try
 							{
-								((App)Application.Current).MainUser.Id = userId.ToString();
+								int userId = await DBConnection.GetUserIdFromEmailAsync(email);
 
-								var code = EmailSender.GenerateCode();
+								((App)Application.Current).MainUser.EmailAddress = email;
 
-								EmailSender sender = new EmailSender(
-									mail,
-									"Zmiana Hasła",
-									$"Twój kod do zmiany hasła: {code}");
+								if (userId != -1)
+								{
+									((App)Application.Current).MainUser.Id = userId.ToString();
 
-								await sender.SendMailAsync();
+									var code = EmailSender.GenerateCode();
 
-								await Application.Current.MainPage.DisplayAlert("Uwaga!", "Kod do zmiany hasła został wysłany na twojego emaila.",
+									EmailSender sender = new EmailSender(
+										mail,
+										"Zmiana Hasła",
+										$"Twój kod do zmiany hasła: {code}");
+
+									await sender.SendMailAsync();
+
+									await Application.Current.MainPage.DisplayAlert("Uwaga!", "Kod do zmiany hasła został wysłany na twojego emaila.",
+									"Ok");
+
+									var viewModel = new ForgotPasswordViewModel(code);
+									var detailsPage = new ForgotPasswordPage { BindingContext = viewModel };
+									detailsPage.Title = "Zmiana Hasla";
+
+									var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
+									await navigation.PushAsync(detailsPage, true);
+								}
+								else
+								{
+									await Application.Current.MainPage.DisplayAlert("Błąd!", "Podany email nie jest powiązany z żadnym kontem!",
+																					"Ok");
+								}
+							}
+							catch (Exception)
+							{
+								await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+								"oraz że mam włączonego laptopa :>",
 								"Ok");
-
-								var viewModel = new ForgotPasswordViewModel(code);
-								var detailsPage = new ForgotPasswordPage { BindingContext = viewModel };
-								detailsPage.Title = "Zmiana Hasla";
-
-								var navigation = ((MasterDetailPage)Application.Current.MainPage).Detail as NavigationPage;
-								await navigation.PushAsync(detailsPage, true);
 							}
-							else
-							{
-								await Application.Current.MainPage.DisplayAlert("Błąd!", "Podany email nie jest powiązany z żadnym kontem!",
-																				"Ok");
-							}
-							
+
 						}
 						catch
 						{

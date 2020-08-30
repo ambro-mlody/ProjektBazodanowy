@@ -41,12 +41,7 @@ namespace GUI.ViewModels
 
         public MainViewModel()
         {
-            GetPizzas();
-        }
 
-        private async void GetPizzas()
-        {
-            PizzaItems = await DBConnection.GetPizzasFromDBAsync();
         }
 
         /// <summary>

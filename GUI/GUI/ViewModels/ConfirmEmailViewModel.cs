@@ -48,20 +48,29 @@ namespace GUI.ViewModels
 				{
 					string password = Hashing.HashPassword(((App)Application.Current).MainUser.Password);
 					((App)Application.Current).MainUser.Password = password;
+					var email = ((App)Application.Current).MainUser.EmailAddress;
 
-					await Application.Current.MainPage.DisplayAlert("Gotowe!", "Twoje konto zostało utwożone! Masz teraz dostęp do wszystkich funkcji :>",
+					try
+					{
+						int userId = await DBConnection.CreateUserInDBAsync(email, password);
+
+						await Application.Current.MainPage.DisplayAlert("Gotowe!", "Twoje konto zostało utwożone! Masz teraz dostęp do wszystkich funkcji :>",
 							"Ok");
 
-					var email = ((App)Application.Current).MainUser.EmailAddress;
-					int userId = await DBConnection.CreateUserInDBAsync(email, password);
+						LoginAccounPageChanges.ShowAccountPageInMenuSetup();
 
-					LoginAccounPageChanges.ShowAccountPageInMenuSetup();
+						((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(userId);
 
-					((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(userId);
+						((App)Application.Current).MainUser.Id = userId.ToString();
 
-					((App)Application.Current).MainUser.Id = userId.ToString();
-
-					LoginAccounPageChanges.GoToAccountPage();
+						LoginAccounPageChanges.GoToAccountPage();
+					}
+					catch (Exception)
+					{
+						await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+							"oraz że mam włączonego laptopa :>",
+							"Ok");
+					}
 				}
 				else
 				{

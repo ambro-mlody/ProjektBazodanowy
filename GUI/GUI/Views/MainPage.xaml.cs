@@ -1,4 +1,5 @@
-﻿using GUI.ViewModels;
+﻿using GUI.Models;
+using GUI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,22 @@ namespace GUI.Views
         public MainPage()
         {
             InitializeComponent();
+        }
+
+        protected async override void OnAppearing()
+        {
+            try
+            {
+                var viewModel = (MainViewModel)BindingContext;
+                viewModel.PizzaItems = await DBConnection.GetPizzasFromDBAsync();
+            }
+            catch (Exception)
+            {
+                await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+                                    "oraz że mam włączonego laptopa :>", "Ok");
+            }
+
+            base.OnAppearing();
         }
     }
 }

@@ -24,7 +24,15 @@ namespace GUI.Views
         {
             if(((App)Application.Current).MainUser.Loged)
             {
-                await DBConnection.UpdateUserInDBAsync(((App)Application.Current).MainUser);
+                try
+                {
+                    await DBConnection.UpdateUserInDBAsync(((App)Application.Current).MainUser);
+                }
+                catch (Exception)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. upewnij się, że masz połączenie z internetem," +
+                                    "oraz, że mam włączonego laptopa :>", "Ok");
+                }
             }
 
             base.OnDisappearing();

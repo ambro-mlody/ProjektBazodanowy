@@ -70,20 +70,29 @@ namespace GUI.ViewModels
 
 						var id = int.Parse(((App)Application.Current).MainUser.Id);
 
-						((App)Application.Current).MainUser.Password = password;
+						try
+						{
+							await DBConnection.ChangeUserPasswordAsync(id, password);
 
-						await DBConnection.ChangeUserPasswordAsync(id, password);
+							((App)Application.Current).MainUser.Password = password;
 
-						await Application.Current.MainPage.DisplayAlert("Gotowe!", "Hasło zostało zmienione!",
+							await Application.Current.MainPage.DisplayAlert("Gotowe!", "Twoje konto zostało utwożone! Masz teraz dostęp do wszystkich funkcji :>",
+								"Ok");
+
+							LoginAccounPageChanges.ShowAccountPageInMenuSetup();
+
+							((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(id);
+
+							LoginAccounPageChanges.GoToAccountPage();
+
+						}
+						catch (Exception)
+						{
+							await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+							"oraz że mam włączonego laptopa :>",
 							"Ok");
+						}
 
-						LoginAccounPageChanges.ShowAccountPageInMenuSetup();
-
-						
-
-						((App)Application.Current).MainUser = await DBConnection.GetUserDataAsync(id);
-
-						LoginAccounPageChanges.GoToAccountPage();
 					}
 					else
 					{
