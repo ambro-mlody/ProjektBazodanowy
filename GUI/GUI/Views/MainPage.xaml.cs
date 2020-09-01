@@ -31,10 +31,9 @@ namespace GUI.Views
                     viewModel.PizzaItems = ((App)Application.Current).Pizzas;
                     ((App)Application.Current).FirstConnection = false;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
-                            "oraz że mam włączonego laptopa :>",
+                    await Application.Current.MainPage.DisplayAlert("Brak połączenia!", e.Message,
                         "Ok");
                 }
             }

@@ -18,7 +18,7 @@ namespace GUI.Models
 		/// <summary>
 		/// Dane serwera, bazy oraz konta.
 		/// </summary>
-        public static string ConnectionString { get; set; } = @"Data Source=192.168.8.101\MSSQLSERVEWELL;Initial Catalog=pizzeriaDB;User ID=PizzeriaLogin;Password=Pizzeria";
+        public static string ConnectionString { get; set; } = @"Data Source=87.251.238.149\MSSQLSERVEWELL;Initial Catalog=pizzeriaDB;User ID=PizzeriaLogin;Password=Pizzeria";
 
 
 		/// <summary>
