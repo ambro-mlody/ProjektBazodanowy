@@ -22,15 +22,26 @@ namespace GUI.Views
 
         protected async override void OnAppearing()
         {
-            try
+            if(((App)Application.Current).FirstConnection)
+            {
+                try
+                {
+                    ((App)Application.Current).Pizzas = await DBConnection.GetPizzasFromDBAsync();
+                    var viewModel = (MainViewModel)BindingContext;
+                    viewModel.PizzaItems = ((App)Application.Current).Pizzas;
+                    ((App)Application.Current).FirstConnection = false;
+                }
+                catch (Exception)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
+                            "oraz że mam włączonego laptopa :>",
+                        "Ok");
+                }
+            }
+            else
             {
                 var viewModel = (MainViewModel)BindingContext;
-                viewModel.PizzaItems = await DBConnection.GetPizzasFromDBAsync();
-            }
-            catch (Exception)
-            {
-                await Application.Current.MainPage.DisplayAlert("Brak połączenia!", "Nie udało się połączyć z bazą danych. Upewnij się, że masz połączenie z internetem, " +
-                                    "oraz że mam włączonego laptopa :>", "Ok");
+                viewModel.PizzaItems = ((App)Application.Current).Pizzas;
             }
 
             base.OnAppearing();

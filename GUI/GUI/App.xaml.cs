@@ -10,6 +10,10 @@ namespace GUI
     {
         public User MainUser;
 
+        public ObservableCollection<PizzaItem> Pizzas;
+
+        public bool FirstConnection = true;
+
 
         public App()
         {
