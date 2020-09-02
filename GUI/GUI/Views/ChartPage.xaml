@@ -72,7 +72,7 @@
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="2*"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
 
@@ -92,17 +92,17 @@
                                         <Label Text="{Binding Size}" d:Text="Średnia 32cm"
                                                FontSize="12" TextColor="Black"
                                                Grid.Row="2" Grid.Column="1"
-                                               Margin="0,-15,0,5"/>
-                                        <ImageButton Source="minus.png" HorizontalOptions="End"
+                                               Margin="0,0,0,5"/>
+                                        <ImageButton Source="minus.png" HorizontalOptions="EndAndExpand"
                                                      Margin="0,0,50,0" WidthRequest="25"
                                                      HeightRequest="25" CornerRadius="5"
-                                                     Grid.Column="2" Grid.Row="1"
+                                                     Grid.Column="2" Grid.Row="1" MinimumWidthRequest="25"
                                                      Command="{Binding BindingContext.MinusAmmountCommand, Source={x:Reference Name=chartPage}, Mode=TwoWay}"
                                                      CommandParameter="{Binding .}"/>
-                                        <ImageButton Source="add.png" HorizontalOptions="End"
+                                        <ImageButton Source="add.png" HorizontalOptions="EndAndExpand"
                                                      Margin="10,0,10,0" WidthRequest="25"
                                                      HeightRequest="25" CornerRadius="5"
-                                                     Grid.Column="2" Grid.Row="1"
+                                                     Grid.Column="2" Grid.Row="1" MinimumWidthRequest="25"
                                                      Command="{Binding BindingContext.PlusAmmountCommand, Source={x:Reference Name=chartPage}, Mode=TwoWay}"
                                                      CommandParameter="{Binding .}"/>
                                     </Grid>
@@ -120,13 +120,7 @@
                                 <StackLayout>
                                     <Entry Text="{Binding user.Address.Street}" Placeholder="Ulica" TextColor="Black" FontSize="12"
                                        ClearButtonVisibility="WhileEditing">
-                                        <Entry.Behaviors>
-                                            <behaviors:NotEmptyBehavior x:Name="streetValidator"/>
-                                        </Entry.Behaviors>
                                     </Entry>
-                                    <Label x:Name="streetErrorLabel" FontSize="9" Margin="10,-5,0,0"
-                                           TextColor="Red" Style="{Binding Source={x:Reference streetValidator}, 
-                                           Path=IsValid, Converter={StaticResource boolToNotEmptyStyle}}"/>
                                 </StackLayout>
                                 <StackLayout>
                                     <Entry Text="{Binding user.Address.HouseNumber}" Placeholder="Numer Domu" TextColor="Black" FontSize="12"
@@ -236,8 +230,6 @@
                     <Button.Triggers>
                         <MultiTrigger TargetType="Button">
                             <MultiTrigger.Conditions>
-                                <BindingCondition Binding="{Binding IsValid, Source={x:Reference streetValidator} }"
-                                                  Value="True"/>
                                 <BindingCondition Binding="{Binding IsValid, Source={x:Reference houseNumberValidator} }"
                                                   Value="True"/>
                                 <BindingCondition Binding="{Binding IsValid, Source={x:Reference cityValidator} }"
