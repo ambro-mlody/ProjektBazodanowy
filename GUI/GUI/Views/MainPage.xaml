@@ -61,7 +61,7 @@
                             <Image Aspect="AspectFill" Source="{Binding Image}"
                                    HorizontalOptions="Center" 
                                    VerticalOptions="Center" Margin="5,0"/>
-                            <Label Grid.Row="1" Text="{Binding Price}" 
+                            <Label Grid.Row="1" Text="{Binding Price, StringFormat='{0:0.00}'}" 
                                    TextColor="Red" VerticalOptions="End" HorizontalOptions="Start" 
                                    FontSize="12" FontAttributes="Bold" Margin="5,0"/>
                             <Label Grid.Row="2" Text="{Binding Name}" TextColor="Black" FontAttributes="Bold" 

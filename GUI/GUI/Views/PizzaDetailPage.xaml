@@ -20,7 +20,7 @@
                     <Image Source="{Binding SelectedPizzaItem.Image}" Aspect="AspectFit" HeightRequest="200"
                            WidthRequest="200" HorizontalOptions="Center" VerticalOptions="Center"
                            Grid.Row="0" d:Source="search.png"/>
-                    <Label Text="{Binding CurrentPrice, StringFormat='{0} PLN'}" 
+                    <Label Text="{Binding CurrentPrice, StringFormat='{0:0.00} PLN'}" 
                            VerticalOptions="Center" HorizontalOptions="End" 
                            Grid.Row="1" d:Text="9.99 PLN" FontSize="16"
                            TextColor="Black" FontAttributes="Bold" Margin="0,0,20,0"/>
@@ -109,7 +109,7 @@
                 <Image Source="cart.png" Aspect="AspectFit" HeightRequest="20" 
                    WidthRequest="20" HorizontalOptions="Start" 
                    VerticalOptions="Center" Grid.Column="0"/>
-                <Label Text="{Binding TotalAmount, StringFormat='{0} PLN'}" TextColor="Black" 
+                <Label Text="{Binding TotalAmount, StringFormat='{0:0.00} PLN'}" TextColor="Black" 
                    FontSize="16" HorizontalOptions="Start" VerticalOptions="Center" 
                    d:Text="29,99 PLN" Grid.Column="1" Margin="5,0,0,0"/>
                 <Button Text="Dodaj do koszyka" BackgroundColor="Blue" Grid.Column="2"

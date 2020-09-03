@@ -143,7 +143,7 @@ namespace GUI.ViewModels
                 if(size == (int)Size.small)
                 {
                     _size.Name = "Mała";
-                    price = SelectedPizzaItem.Price * .9;
+                    price = SelectedPizzaItem.Price * .66;
                 }
                 else if(size == (int)Size.normal)
                 {
@@ -153,7 +153,7 @@ namespace GUI.ViewModels
                 else
                 {
                     _size.Name = "Duża";
-                    price = SelectedPizzaItem.Price * 1.1;
+                    price = SelectedPizzaItem.Price * 1.33;
                 }
             });
 

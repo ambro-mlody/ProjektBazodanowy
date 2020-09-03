@@ -69,7 +69,7 @@ namespace GUI.ViewModels
 					try
 					{
 						await DBConnection.ChangeUserPasswordAsync(id, password);
-						await Application.Current.MainPage.DisplayAlert("Gotowe!", "Hasło zostało amienione.!",
+						await Application.Current.MainPage.DisplayAlert("Gotowe!", "Hasło zostało zmienione.",
 						"Ok");
 					}
 					catch (Exception)

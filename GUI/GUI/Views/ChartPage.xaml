@@ -83,7 +83,7 @@
                                                FontSize="16" FontAttributes="Bold"
                                                TextColor="Black" Grid.Column="1"
                                                Margin="10,0,0,0"/>
-                                        <Label Text="{Binding TotalCost, StringFormat='{0} PLN'}" d:Text="26,00 zl"
+                                        <Label Text="{Binding TotalCost, StringFormat='{0:0.00} PLN'}" d:Text="26,00 zl"
                                                FontSize="16" Grid.Column="2"
                                                HorizontalOptions="End" Margin="0,0,10,0"/>
                                         <Label Text="{Binding Pizza.Description}" d:Text="Description"
@@ -222,7 +222,7 @@
             </StackLayout>
             <StackLayout VerticalOptions="End" HeightRequest="50">
                 <Button BackgroundColor="#9b89ad" 
-                        Text="{Binding Price, StringFormat='Zamawiam ({0} PLN)'}" 
+                        Text="{Binding Price, StringFormat='Zamawiam ({0:0.00} PLN)'}" 
                         d:Text="Zamawiam (30,00 PLN)" 
                        TextColor="Black" FontSize="18" FontAttributes="Bold"
                         Command="{Binding OrderCommand}"
