@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 
-namespace GUI.Models
+namespace DItalia.Models
 {
     /// <summary>
     /// Klasa zawierająca informację o pizzy znajdującej się w koszyku użytkownika.

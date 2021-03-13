@@ -1,11 +1,11 @@
-﻿using GUI.Models;
+﻿using DItalia.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 
-namespace GUI.ViewModels
+namespace DItalia.ViewModels
 {
 	/// <summary>
 	/// Obsługa karty potwoerdzenia adresu email.

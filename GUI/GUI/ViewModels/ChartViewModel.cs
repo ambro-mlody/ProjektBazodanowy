@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 using System.Windows.Input;
-using GUI.Models;
+using DItalia.Models;
 using System.Collections.ObjectModel;
 
-namespace GUI.ViewModels
+namespace DItalia.ViewModels
 {
 	/// <summary>
 	/// Obsługa koszyka.

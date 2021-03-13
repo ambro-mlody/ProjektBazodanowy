@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 
-namespace GUI.Models
+namespace DItalia.Models
 {
     /// <summary>
     /// Dane pizzy.

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using GUI.Models;
+using DItalia.Models;
 
-namespace GUI.Views
+namespace DItalia.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AppMasterDetailPageMaster : ContentPage

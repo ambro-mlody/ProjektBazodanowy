@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace GUI.Models
+namespace DItalia.Models
 {
     /// <summary>
     /// Koszyk użytkownika.

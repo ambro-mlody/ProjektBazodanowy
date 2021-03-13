@@ -4,12 +4,12 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace GUI.ViewModels
+namespace DItalia.ViewModels
 {
     /// <summary>
     /// Bazowa klasa zawierająca obsługę zdarzenia OnPropertyChanged.
     /// </summary>
-    class BaseViewModel : INotifyPropertyChanged
+    abstract class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

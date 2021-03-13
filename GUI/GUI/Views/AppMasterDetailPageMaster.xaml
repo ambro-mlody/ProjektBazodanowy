@@ -4,8 +4,8 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="GUI.Views.AppMasterDetailPageMaster"
-             Title="Master">
+             x:Class="DItalia.Views.AppMasterDetailPageMaster"
+             Title="Menu">
     
     <StackLayout BackgroundColor="LightGray">
     <ListView x:Name="MenuItemsListView"

@@ -93,9 +93,9 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GUI\GUI.csproj">
-      <Project>{289F0973-644F-4CC4-90BF-B610AFF10500}</Project>
-      <Name>GUI</Name>
+    <ProjectReference Include="..\GUI\DItalia.csproj">
+      <Project>{6702225B-4AAB-42DA-A51A-1D023103ACAD}</Project>
+      <Name>DItalia</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

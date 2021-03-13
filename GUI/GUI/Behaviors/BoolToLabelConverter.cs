@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Text;
 using Xamarin.Forms;
 
-namespace GUI.Behaviors
+namespace DItalia.Behaviors
 {
 
     /// <summary>

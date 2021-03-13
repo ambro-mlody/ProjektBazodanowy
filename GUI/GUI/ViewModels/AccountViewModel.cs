@@ -1,11 +1,11 @@
-﻿using GUI.Models;
-using GUI.Views;
+﻿using DItalia.Models;
+using DItalia.Views;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using Xamarin.Forms;
 
-namespace GUI.ViewModels
+namespace DItalia.ViewModels
 {
 	/// <summary>
 	/// ViewModel obsługujący kartę konta użytkownika.

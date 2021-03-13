@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace GUI.Models
+namespace DItalia.Models
 {
 	/// <summary>
 	/// Klasa odpowiedzialna za łączenie się z bazą danych.

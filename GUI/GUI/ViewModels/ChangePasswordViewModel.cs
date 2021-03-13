@@ -1,4 +1,4 @@
-﻿using GUI.Models;
+﻿using DItalia.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
-namespace GUI.ViewModels
+namespace DItalia.ViewModels
 {
 	/// <summary>
 	/// Klasa obsługująca kartę zmiany hasła.

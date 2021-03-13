@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GUI.Models
+namespace DItalia.Models
 {
     /// <summary>
     /// Pole w bocznym menu.

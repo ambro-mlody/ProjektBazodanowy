@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GUI.Models
+namespace DItalia.Models
 {
     /// <summary>
     /// Profil użytkownika pobierany z API z faccebooka.

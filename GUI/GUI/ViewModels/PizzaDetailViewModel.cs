@@ -1,5 +1,5 @@
-﻿using GUI.Models;
-using GUI.Views;
+﻿using DItalia.Models;
+using DItalia.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 
-namespace GUI.ViewModels
+namespace DItalia.ViewModels
 {
     public enum Size
     {

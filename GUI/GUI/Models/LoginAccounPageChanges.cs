@@ -1,12 +1,12 @@
-﻿using GUI.ViewModels;
-using GUI.Views;
+﻿using DItalia.ViewModels;
+using DItalia.Views;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
-using static GUI.Views.AppMasterDetailPageMaster;
+using static DItalia.Views.AppMasterDetailPageMaster;
 
-namespace GUI.Models 
+namespace DItalia.Models 
 {
 	/// <summary>
 	/// Statyczna klasa zawierająca metody odpowiedzialne za logikę zmian międdzy kartą użytkownika, a ekranem logowania.

@@ -1,10 +1,10 @@
-﻿using GUI.Models;
+﻿using DItalia.Models;
 using System;
 using System.Collections.ObjectModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace GUI
+namespace DItalia
 {
     public partial class App : Application
     {

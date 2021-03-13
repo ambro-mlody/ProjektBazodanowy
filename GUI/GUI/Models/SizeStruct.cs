@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GUI.Models
+namespace DItalia.Models
 {
     /// <summary>
     /// Klasa opisująca różne rozmiary pizzz do wyboru.

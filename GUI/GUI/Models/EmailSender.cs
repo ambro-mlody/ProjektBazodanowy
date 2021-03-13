@@ -5,7 +5,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GUI.Models
+namespace DItalia.Models
 {
     /// <summary>
     /// Klasa odpowiadająca za wysyłanie emaili.

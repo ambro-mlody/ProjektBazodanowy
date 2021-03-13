@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
-namespace GUI.Behaviors
+namespace DItalia.Behaviors
 {
     /// <summary>
     /// Klasa sprawdzająca poprawność numeru telefonu.

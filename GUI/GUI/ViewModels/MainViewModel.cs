@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using GUI.Models;
-using GUI.Views;
+using DItalia.Models;
+using DItalia.Views;
 using Xamarin.Forms;
 
-namespace GUI.ViewModels
+namespace DItalia.ViewModels
 {
     class MainViewModel : BaseViewModel
     {

@@ -1,5 +1,5 @@
-﻿using GUI.Models;
-using GUI.Views;
+﻿using DItalia.Models;
+using DItalia.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using Xamarin.Auth;
 using Xamarin.Auth.Presenters;
 using Xamarin.Forms;
 
-namespace GUI.ViewModels
+namespace DItalia.ViewModels
 {
     class LogInViewModel : BaseViewModel
     {
